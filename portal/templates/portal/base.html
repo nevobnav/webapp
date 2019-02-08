@@ -1,0 +1,112 @@
+{% load static %}
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>BKE Drone display</title>
+    {% block header %}
+    {% endblock %}
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{% static 'portal/css/main.css'%}">
+    <link rel="stylesheet" href="{% static 'portal/css/dashboard.css'%}">
+
+  </head>
+
+  <body>
+    <header class="site-header">
+      <!--- This is the top bar --->
+      <nav class="navbar navbar-expand-md navbar-dark bg-green fixed-top py-0">
+        <div class="container">
+          <a class="navbar-brand py-2.5 mr-4" href="{% url 'portal-home' %}">BKE Drones</a>
+          {% if user.is_authenticated %}
+          <button type="button" class="btn btn-warning nav-toggle-button" id="toggle-button">Plots</button>
+            <div class="collapse navbar-collapse" id="navbarToggle">
+              <div class="navbar-nav mr-auto">
+                <a class="nav-item py-0 nav-link" href="{% url 'portal-home' %}">Home</a>
+                <a class="nav-item py-0 nav-link" href="{% url 'portal-logout' %}">Log uit</a>
+              </div>
+              <div class = "navbar-nav ml-auto">
+                <span class="navbar-text py-0 ml-auto" >{{user.first_name}} {{ user.last_name }}</span>
+              </div>
+            </div>
+          {% else %}
+            <div class="collapse navbar-collapse" id="navbarToggle">
+              <div class="navbar-nav mr-auto">
+                <a class="nav-item nav-link" href="{% url 'portal-home' %}">Home</a>
+                <a class="nav-item nav-link" href="{% url 'portal-login' %}">Login</a>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+
+
+
+   <!-- This is the left nav bar -->
+    <div class="container-fluid" style="height: 100%">
+      <div class="row" style="height: 100%">
+        <div class="col-auto  sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column" id="js-menu">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'portal-home' %}">
+                  <span data-feather="layers"></span>
+                  Dashboard
+                </a>
+              </li>
+
+
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Percelen</span>
+            </h6>
+            <ul class="nav flex-column mb-2">
+            {% for plot in plots %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'portal-map' plot.id %}">
+                <span data-feather="file-text"></span>
+                {{ plot.street }} {{ plot.number }}
+              </a>
+            </li>
+            {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <!-- This is the main column where the map lives -->
+        <div class="col" style="height: 90%">
+          {%block content%}
+          {% endblock content %}
+        </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script>
+      document.querySelector('#toggle-button').addEventListener('click', function() {
+      document.querySelector('.sidebar-sticky').classList.toggle('collapsed');
+      });
+    </script>
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script>
+      feather.replace()
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  </body>
+</html>
