@@ -1,4 +1,4 @@
-"""BKE_portal URL Configuration
+"""drones URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.0/topics/http/urls/
@@ -14,8 +14,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
+from django.urls import path, include
+from django.views.generic.base import RedirectView
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('portal/', include ('portal.urls')),
+    path('', RedirectView.as_view(url='/login/')),
+    path('login/', auth_views.LoginView.as_view(template_name = 'portal/login.html'), name='portal-login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name = 'portal/logout.html'), name='portal-logout')
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
