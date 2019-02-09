@@ -7,7 +7,7 @@ class Plot(models.Model):
     name = models.CharField(max_length=100)
     street = models.CharField(max_length=100)
     number = models.IntegerField()
-    shape = models.PolygonField(null=True, blank=True)
+    shape = models.PolygonField(null=True, blank=True, geography=True)
 
     crop_choices = (
     ('AKKER', 'Akkerbouw'),
@@ -22,12 +22,19 @@ class Plot(models.Model):
     startdate= models.DateField(default=date.today())
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
 
-
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('portal-map',kwargs={'id': self.id})
+
+    @property
+    def area(self):
+        area = (1/10000) * self.shape.transform(28992,clone=True).area
+        return area
+
+
+
 
 class Scan(models.Model):
     plot = models.ForeignKey(Plot, on_delete=models.CASCADE)

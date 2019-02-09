@@ -75,7 +75,7 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'portal-map' plot.id %}">
                 <span data-feather="file-text"></span>
-                {{ plot.street }} {{ plot.number }}
+                {{ plot.street }} {{ plot.number }} ({{ plot.area }} ha.)
               </a>
             </li>
             {% endfor %}

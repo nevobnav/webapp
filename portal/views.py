@@ -26,6 +26,7 @@ def map(request, map_id):
     plots = get_all_plots(request)
     this_plot =  Plot.objects.get(id=map_id)
     scans = Scan.objects.filter(plot=this_plot)
+    area = this_plot.shape.transform(28992,clone=True).area
 
     if user == this_plot.customer:
         context = {
