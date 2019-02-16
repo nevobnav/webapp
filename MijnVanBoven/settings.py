@@ -145,6 +145,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = '/portal/'
 
 try:
-    from local_settings import *
+    from .local_settings import *
 except ImportError as e:
     pass
