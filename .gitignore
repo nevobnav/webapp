@@ -2,7 +2,8 @@ env
 *.DS_Store
 *.pyc
 __pycache__
-local_settings.py
+static
+MijnVanBoven/local_settings.py
 db.sqlite3
 portal/static/portal/data
 media
