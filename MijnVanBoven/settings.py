@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import json
 
-with open('BKE_portal/config.json') as config_file:
+with open('MijnVanBoven/config.json') as config_file:
     config = json.load(config_file)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -24,6 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config['SECRET_KEY']
+DB_USER = config['DB_USER']
+DB_PASSWORD = config['DB_PASSWORD']
+DB_IP = config['DB_IP']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -84,10 +87,10 @@ WSGI_APPLICATION = 'MijnVanBoven.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'bke_drones',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+        'NAME': 'VanBoven_website',
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_IP,
         'PORT': 5432
     }
 
