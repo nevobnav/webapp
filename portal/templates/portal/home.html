@@ -1,11 +1,10 @@
 {% extends "portal/base.html" %}
-
 {% block content %}
 
   <h2>Hoofdpagina</h2>
   {% if user.is_authenticated %}
     <p>Welkom {{ user.first_name }}!</p>
-
+    <img src="{{ MEDIA_URL}}IMG_0329.jpg" alt="" style="width:100px;height:100px;">
 
   {% else %}
     <p>Welcome! Please <a href="{% url 'portal-login' %}">login</a>.
