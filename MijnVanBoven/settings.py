@@ -13,8 +13,12 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import json
 
-with open('MijnVanBoven/config.json') as config_file:
-    config = json.load(config_file)
+try:
+    with open('MijnVanBoven/config.json') as config_file: #Use this one when running local
+        config = json.load(config_file)
+except:
+    with open('/etc/config.json') as config_file:
+        config = json.load(config_file)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -147,4 +151,5 @@ LOGIN_REDIRECT_URL = '/portal/'
 try:
     from .local_settings import *
 except ImportError as e:
+    print("Bad import")
     pass
