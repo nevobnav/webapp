@@ -2,7 +2,6 @@ env
 *.DS_Store
 *.pyc
 __pycache__
-static
 MijnVanBoven/local_settings.py
 db.sqlite3
 portal/static/portal/data
