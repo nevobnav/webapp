@@ -23,7 +23,8 @@ class Plot(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        myname = str(self.customer) + ' - ' + self.name
+        return myname
 
     def get_absolute_url(self):
         return reverse('portal-map',kwargs={'id': self.id})
