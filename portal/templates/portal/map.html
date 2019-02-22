@@ -45,8 +45,8 @@
   <script>
   var username = "{{ user.username }}"
     var plotname = "{{ plot.name }}"
-    var plotid = ""{{ plot.id }}
-    var basic_data_path = "{{ MEDIA_URL }}/data/"
+    var plotid = "{{ plot.id }}"
+    var basic_data_path = "{{ MEDIA_URL }}data/"
   </script>
 
 {% endblock %}
@@ -84,8 +84,8 @@
     // LAYERS
     var scan_list = []
     {% for scan in scans %}
-      var scan_path = basic_data_path + username+ "/" + plotid + "/scans/" + scan_date + "/{z}/{x}/{y}.png"
-      var scan_path =  + scan_date + "/{z}/{x}/{y}.png"
+      var scan_date = {{ scan.date|date:"Ymd" }}
+      var scan_path = basic_data_path + username + "/" + plotid + "/" + scan_date + "/{z}/{x}/{y}.png"
 
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,

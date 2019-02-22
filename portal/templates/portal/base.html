@@ -18,6 +18,8 @@
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="{% static 'portal/css/main.css'%}">
     <link rel="stylesheet" href="{% static 'portal/css/dashboard.css'%}">
+    <!-- custom fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed" >
 
   </head>
 
@@ -75,9 +77,10 @@
             {% for plot in plots %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'portal-map' plot.id %}">
-                <span data-feather="file-text"></span>
-                {{ plot.street }} {{ plot.number }} ({{ plot.area}} ha.)
-              </a>
+                <span data-feather="file-text"></span> <!-- This is the icon -->
+                {{ plot.street }} {{ plot.number }}
+                <span class="text-secondary"> ({{ plot.area | floatformat}} ha.)</span>
+              </a>  
             </li>
             {% endfor %}
             </ul>
