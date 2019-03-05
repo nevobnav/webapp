@@ -59,6 +59,7 @@
 
     var lat = {{ plot.shape.centroid.y }}
     var lon = {{ plot.shape.centroid.x }}
+    var max_zoom = 22
     var center_coords = [lat, lon]
 
     // initalize slider control
@@ -73,11 +74,11 @@
 
     var base_sat =  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      // maxZoom: 18,
+      //maxZoom: 24,
       id: 'mapbox.satellite',
       accessToken: 'pk.eyJ1IjoiYm5vb3RlYm9zIiwiYSI6ImNqcXA3ZHAzODBtbWM0MnBzZm5vbGRndmUifQ.H2zjIsYA5P2SFxZlSBIYjA',
       time: "2013-01-22 8:42:26+01",
-      maxZoom:23
+      maxZoom: max_zoom
     }).addTo(map);
 
 
@@ -89,7 +90,7 @@
 
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,
-        maxZoom: 23,
+        maxZoom: max_zoom,
         tms: true,
         time: "{{scan.date }}"
       });
