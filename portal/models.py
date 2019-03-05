@@ -3,13 +3,6 @@ from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from datetime import date
 
-class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    customer_id = models.CharField(max_length = 100, blank = True)
-    def __str__(self):
-        myname = str(self.customer_id)
-        return myname
-
 class Plot(models.Model):
     name = models.CharField(max_length=100)
     street = models.CharField(max_length=100)
@@ -40,6 +33,9 @@ class Plot(models.Model):
     def area(self):
         area = (1/10000) * self.shape.transform(28992,clone=True).area
         return area
+
+
+
 
 class Scan(models.Model):
     plot = models.ForeignKey(Plot, on_delete=models.CASCADE)

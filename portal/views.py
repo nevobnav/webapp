@@ -40,7 +40,6 @@ def map(request, map_id):
         return redirect('portal-home')
 
 
-
 def about(request):
     return render(request, 'portal/about.html')
 
