@@ -39,6 +39,22 @@ def map(request, map_id):
     else:
         return redirect('portal-home')
 
+@login_required(login_url='/login/')
+def user_profile(request):
+    user = request.user
+    plots = get_all_plots(request)
+    acreage = 0
+    for plot in plots:
+        acreage += plot.area
+
+    context = {
+    'plots' : plots,
+    'acreage': acreage,
+    'user' : user,
+
+    }
+    return render(request,'portal/user_profile.html', context=context)
+
 
 def about(request):
     return render(request, 'portal/about.html')
