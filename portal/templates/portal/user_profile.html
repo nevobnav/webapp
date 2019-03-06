@@ -1,0 +1,31 @@
+{% extends "portal/base.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="article-content">
+    <h2>Profiel</h2>
+    <table class="table">
+      <tbody>
+        <tr>
+          <td>Naam</td>
+          <td>{{ user.first_name }} {{ user.last_name }}</td>
+        </tr>
+        <tr>
+          <td>Percelen</td>
+          <td>{{ plots|length}}</td>
+        </tr>
+        <tr>
+          <td>Totaal areaal</td>
+          <td>{{ acreage | floatformat }}ha.</td>
+        </tr>
+        <tr>
+          <td>Gebruikersnaam</td>
+          <td>{{ user.username}}</td>
+        </tr>
+        <tr>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}

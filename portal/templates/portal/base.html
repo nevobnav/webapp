@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>BKE Drone display</title>
+    <title>Mijn VanBoven</title>
     {% block header %}
     {% endblock %}
     <!-- Bootstrap core CSS -->
@@ -28,16 +28,22 @@
       <!--- This is the top bar --->
       <nav class="navbar navbar-expand-md navbar-dark bg-green fixed-top py-0">
         <div class="container">
-          <a class="navbar-brand py-2.5 mr-4" href="{% url 'portal-home' %}">BKE Drones</a>
+         <a class="navbar-brand mr-4 py-2" href="{% url 'portal-home' %}">
+           <img alt="VanBoven" src="{% static 'portal/images/logo_white_small_transparent.png' %}" height="20 ">
+         </a>
           {% if user.is_authenticated %}
-          <button type="button" class="btn btn-warning nav-toggle-button" id="toggle-button">Plots</button>
+          <button type="button" class="btn btn-warning nav-toggle-button" id="toggle-button">Menu</button>
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
                 <a class="nav-item py-0 nav-link" href="{% url 'portal-home' %}">Home</a>
                 <a class="nav-item py-0 nav-link" href="{% url 'portal-logout' %}">Log uit</a>
               </div>
               <div class = "navbar-nav ml-auto">
-                <span class="navbar-text py-0 ml-auto" >{{user.first_name}} {{ user.last_name }}</span>
+                <span class="navbar-text py-0 ml-auto" >
+                  <a class="nav-item py-0 nav-link" href="{% url 'portal-user-profile' %}">
+                  {{user.first_name}} {{ user.last_name }}
+                  </a>
+                </span>
               </div>
             </div>
           {% else %}
@@ -61,10 +67,7 @@
           <div class="sidebar-sticky">
             <ul class="nav flex-column" id="js-menu">
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'portal-home' %}">
-                  <span data-feather="layers"></span>
-                  Dashboard
-                </a>
+                <h5 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1"> Menu</h5>
               </li>
 
 
@@ -80,7 +83,7 @@
                 <span data-feather="file-text"></span> <!-- This is the icon -->
                 {{ plot.street }} {{ plot.number }}
                 <span class="text-secondary"> ({{ plot.area | floatformat}} ha.)</span>
-              </a>  
+              </a>
             </li>
             {% endfor %}
             </ul>

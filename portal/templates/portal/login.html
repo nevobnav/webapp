@@ -10,7 +10,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="{% static 'portal/images/favico.ico' %}"/>
 
-    <title>Signin Template for Bootstrap</title>
+    <title>Login - Mijn VanBoven</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
@@ -26,9 +26,9 @@
           <div class="content-section">
             <form method="POST">
               {% csrf_token %}
-              <img src="{% static "portal/images/marker-icon-2x.png" %}" width=30px>
+              <img src="{% static 'portal/images/logo_transparent.png' %}" width=150px>
               <fieldset class="form-group">
-                <legend class="border-bottom mb-4">BKE Drones</legend>
+
                 {{ form|crispy }}
               </fieldset>
               <div class="form-group">
@@ -36,7 +36,7 @@
               </div>
             </form>
           </div>
-          <p class="mt-5 mb-3 text-muted">&copy; 2019 - BKE Drones</p>
+          <p class="mt-5 mb-3 text-muted">&copy; 2019 - VanBoven Drones</p>
         </div>
       </div>
     </div>

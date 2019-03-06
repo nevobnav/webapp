@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Plot, Scan
+from .models import Plot, Scan, Customer
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 
@@ -12,3 +12,4 @@ class CustomLeafletGeoAdmin(LeafletGeoAdmin):
 
 admin.site.register(Plot,CustomLeafletGeoAdmin)
 admin.site.register(Scan)
+admin.site.register(Customer)
