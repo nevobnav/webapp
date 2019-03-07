@@ -32,7 +32,7 @@ def map(request, map_id):
         context = {
         'map_id' : map_id,
         'plots' : plots,
-        'plot' : this_plot,
+        'this_plot' : this_plot,
         'scans' : scans
         }
         return render(request, 'portal/map.html', context=context)

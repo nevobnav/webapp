@@ -80,7 +80,11 @@
             {% for plot in plots %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'portal-map' plot.id %}">
-                <span data-feather="file-text"></span> <!-- This is the icon -->
+                {% if this_plot.pk == plot.pk %}
+                  <span data-feather="check-square"></span> <!-- This is the icon -->
+                {% else %}
+                  <span data-feather="square"></span> <!-- This is the icon -->
+                {% endif %}
                 {{ plot.street }} {{ plot.number }}
                 <span class="text-secondary"> ({{ plot.area | floatformat}} ha.)</span>
               </a>

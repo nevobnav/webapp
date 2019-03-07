@@ -45,9 +45,9 @@
   <script>
   var username = "{{ user.username }}"
     var customer_id = "{{ user.customer.customer_id }}"
-    var plotname = "{{ plot.name }}"
-    var plotid = "{{ plot.id }}"
-    var plot_foldername = "{{ plot.foldername }}"
+    var plotname = "{{ this_plot.name }}"
+    var plotid = "{{ this_plot.id }}"
+    var plot_foldername = "{{ this_plot.foldername }}"
     var basic_data_path = "{{ MEDIA_URL }}data/"
   </script>
 
@@ -59,8 +59,8 @@
 
   <script>
 
-    var lat = {{ plot.shape.centroid.y }}
-    var lon = {{ plot.shape.centroid.x }}
+    var lat = {{ this_plot.shape.centroid.y }}
+    var lon = {{ this_plot.shape.centroid.x }}
     var center_coords = [lat, lon]
     var max_zoom = 22
 
@@ -88,7 +88,6 @@
     {% for scan in scans %}
       var scan_date = {{ scan.date|date:"Ymd" }}
       var scan_path = basic_data_path + customer_id + "/" + plot_foldername + "/" + scan_date + "/{z}/{x}/{y}.png"
-      console.log(scan_path)
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,
         maxZoom: max_zoom,
