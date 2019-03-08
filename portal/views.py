@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.sessions.models import Session
 from django.http import HttpResponse
-from .models import Plot,Scan
+from .models import Plot,Scan,Customer
 
 def get_all_plots(request_session):
     if request_session.user.is_authenticated:
         user = request_session.user
-        plots = Plot.objects.filter(customer=user).order_by('-startdate')
+        plots = Plot.objects.filter(customer_id=user.customer.pk).order_by('-startdate')
     else:
         plots = ''
     return plots
@@ -25,10 +25,10 @@ def map(request, map_id):
     user = request.user
     plots = get_all_plots(request)
     this_plot =  Plot.objects.get(id=map_id)
-    scans = Scan.objects.filter(plot=this_plot)
+    scans = Scan.objects.filter(plot=this_plot).order_by('date')
     area = this_plot.shape.transform(28992,clone=True).area
 
-    if user == this_plot.customer:
+    if user.customer.pk == this_plot.customer_id:
         context = {
         'map_id' : map_id,
         'plots' : plots,
