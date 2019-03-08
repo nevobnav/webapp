@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from datetime import date
 
+class Customer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    customer_id = models.CharField(max_length = 100, blank = True)
+    def __str__(self):
+        return str(self.customer_id)
+
 class Plot(models.Model):
     name = models.CharField(max_length=100)
     street = models.CharField(max_length=100)
@@ -20,7 +26,7 @@ class Plot(models.Model):
         default='None'
     )
     startdate= models.DateField(default=date.today())
-    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer,blank = True, on_delete=models.CASCADE)
 
     def __str__(self):
         myname = str(self.customer) + ' - ' + self.name
@@ -38,13 +44,6 @@ class Plot(models.Model):
     def foldername(self):
         foldername = str(self.pk) + '_' + str(self.street)
         return foldername
-
-class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    customer_id = models.CharField(max_length = 100, blank = True)
-    def __str__(self):
-        return str(self.customer_id)
-
 
 class Scan(models.Model):
     plot = models.ForeignKey(Plot, on_delete=models.CASCADE)
