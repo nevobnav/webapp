@@ -32,7 +32,9 @@
            <img alt="VanBoven" src="{% static 'portal/images/logo_white_small_transparent.png' %}" height="20 ">
          </a>
           {% if user.is_authenticated %}
-          <button type="button" class="btn btn-warning nav-toggle-button" id="toggle-button">Menu</button>
+          <button type="button" class="btn btn-warning nav-toggle-button" id="toggle-button">
+            <span data-feather="menu"></span> <!-- This is the icon -->
+          </button>
             <div class="collapse navbar-collapse" id="navbarToggle">
               <div class="navbar-nav mr-auto">
                 <a class="nav-item py-0 nav-link" href="{% url 'portal-home' %}">Home</a>
@@ -73,24 +75,35 @@
 
             </ul>
 
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>Percelen</span>
-            </h6>
-            <ul class="nav flex-column mb-2">
-            {% for plot in plots %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'portal-map' plot.id %}">
-                {% if this_plot.pk == plot.pk %}
-                  <span data-feather="check-square"></span> <!-- This is the icon -->
-                {% else %}
-                  <span data-feather="square"></span> <!-- This is the icon -->
-                {% endif %}
-                {{ plot.street }} {{ plot.number }}
-                <span class="text-secondary"> ({{ plot.area | floatformat}} ha.)</span>
-              </a>
-            </li>
-            {% endfor %}
-            </ul>
+            {% if user.is_authenticated %}
+              <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <span>Percelen</span>
+              </h6>
+              <ul class="nav flex-column mb-2">
+              {% for plot in user.customer.get_all_plots %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'portal-map' plot.id %}">
+                  {% if this_plot.pk == plot.pk %}
+                    <span data-feather="check-square"></span> <!-- This is the icon -->
+                  {% else %}
+                    <span data-feather="square"></span> <!-- This is the icon -->
+                  {% endif %}
+                  {{ plot.street }} {{ plot.number }}
+                  <span class="text-secondary"> ({{ plot.area | floatformat}} ha.)</span>
+                </a>
+              </li>
+              {% endfor %}
+              </ul>
+            {% else %}
+              <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                <a class="nav-link" href="{% url 'portal-login' %}">
+                  <span data-feather="log-in"></span>
+                  <span> Log in om je percelen te zien</span>
+                </a>
+              </h6>
+
+            {% endif %}
+
           </div>
         </div>
         <!-- This is the main column where the map lives -->

@@ -8,6 +8,10 @@ class Customer(models.Model):
     customer_id = models.CharField(max_length = 100, blank = True)
     def __str__(self):
         return str(self.customer_id)
+    def get_all_plots(self):
+        all_plots = Plot.objects.filter(customer_id=self.pk).order_by('-startdate')
+        return all_plots
+
 
 class Plot(models.Model):
     name = models.CharField(max_length=100)

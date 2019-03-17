@@ -15,9 +15,7 @@ def get_all_plots(request_session):
 
 
 def home(request):
-    plots = get_all_plots(request)
-    context = {"name" : "Kaz", "plots" : plots}
-    return render(request, 'portal/home.html', context=context)
+    return render(request, 'portal/home.html', context={})
 
 
 @login_required(login_url='/login/')
@@ -31,7 +29,6 @@ def map(request, map_id):
     if user.customer.pk == this_plot.customer_id:
         context = {
         'map_id' : map_id,
-        'plots' : plots,
         'this_plot' : this_plot,
         'scans' : scans
         }
@@ -48,10 +45,7 @@ def user_profile(request):
         acreage += plot.area
 
     context = {
-    'plots' : plots,
     'acreage': acreage,
-    'user' : user,
-
     }
     return render(request,'portal/user_profile.html', context=context)
 
