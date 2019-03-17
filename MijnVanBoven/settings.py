@@ -31,6 +31,8 @@ SECRET_KEY = config['SECRET_KEY']
 DB_USER = config['DB_USER']
 DB_PASSWORD = config['DB_PASSWORD']
 DB_IP = config['DB_IP']
+OPERATIONS_MAIL = config['OPERATIONS_MAIL']
+OPERATIONS_MAIL_PASS = config['OPERATIONS_MAIL_PASS']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -149,6 +151,15 @@ MEDIA_URL = '/media/'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 LOGIN_REDIRECT_URL = '/portal/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = OPERATIONS_MAIL
+EMAIL_HOST_PASSWORD = OPERATIONS_MAIL_PASS
+
+
 
 try:
     from .local_settings import *
