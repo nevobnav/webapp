@@ -1,6 +1,6 @@
 {% extends "portal/base.html" %}
 {% block content %}
-  <div class="article-content">
+  <div class="article-content col-md-12 col-lg-8">
     <h2>Hoofdpagina</h2>
     {% if user.is_authenticated %}
       <p>Welkom {{ user.first_name }}!</p>
