@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
 from .models import Customer,Logbook
+import logging
 
 
 @receiver(post_save, sender=User)
@@ -24,13 +25,14 @@ def user_logged_in_callback(sender, request, user, **kwargs):
     if ip != '127.0.0.1':
         Logbook.objects.create(action='user_logged_in', ip=ip, username=user.username)
 
-
 @receiver(user_logged_out)
 def user_logged_out_callback(sender, request, user, **kwargs):
     ip = request.META.get('REMOTE_ADDR')
-    Logbook.objects.create(action='user_logged_out', ip=ip, username=user.username)
+    if ip != '127.0.0.1':
+        Logbook.objects.create(action='user_logged_out', ip=ip, username=user.username)
 
 
 @receiver(user_login_failed)
 def user_login_failed_callback(sender, credentials, **kwargs):
-    Logbook.objects.create(action='user_login_failed', username=credentials.get('username', None))
+    if ip != '127.0.0.1':
+        Logbook.objects.create(action='user_login_failed', username=credentials.get('username', None))

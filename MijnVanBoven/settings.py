@@ -161,7 +161,24 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = OPERATIONS_MAIL
 EMAIL_HOST_PASSWORD = OPERATIONS_MAIL_PASS
 
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 
 try:
     from .local_settings import *
