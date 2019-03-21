@@ -38,5 +38,4 @@ def user_logged_out_callback(sender, request, user, **kwargs):
 
 @receiver(user_login_failed)
 def user_login_failed_callback(sender, credentials, **kwargs):
-    if ip not in known_IPs.values():
         Logbook.objects.create(action='user_login_failed', username=credentials.get('username', None))
