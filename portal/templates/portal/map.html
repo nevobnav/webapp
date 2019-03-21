@@ -45,11 +45,10 @@
 
   <!-- creating script sources based on user ID-->
   <script>
-  var username = "{{ user.username }}"
+    var username = "{{ user.username }}"
     var customer_id = "{{ user.customer.customer_id }}"
     var plotname = "{{ this_plot.name }}"
     var plotid = "{{ this_plot.id }}"
-    var plot_foldername = "{{ this_plot.foldername }}"
     var basic_data_path = "{{ MEDIA_URL }}data/"
   </script>
 
@@ -64,7 +63,8 @@
     var lat = {{ this_plot.shape.centroid.y }}
     var lon = {{ this_plot.shape.centroid.x }}
     var center_coords = [lat, lon]
-    var max_zoom = 22
+    var max_native_zoom = 24
+    var max_zoom = 25
 
     // initalize slider control
     var sliderControl = null;
@@ -89,10 +89,11 @@
     var scan_list = []
     {% for scan in scans %}
       var scan_date = {{ scan.date|date:"Ymd" }}
-      var scan_path = basic_data_path + customer_id + "/" + plot_foldername + "/" + scan_date + "/{z}/{x}/{y}.png"
+      var scan_path = basic_data_path + customer_id + "/" + plotname + "/" + scan_date + "/{z}/{x}/{y}.png"
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,
         maxZoom: max_zoom,
+        maxNativeZoom: max_native_zoom,
         tms: true,
         time: "{{scan.date }}"
       });
