@@ -87,6 +87,7 @@
 
     // LAYERS
     var scan_list = []
+    var scan_list_test = []
     {% for scan in scans %}
       var scan_date = {{ scan.date|date:"Ymd" }}
       var scan_path = basic_data_path + customer_id + "/" + plotname + "/" + scan_date + "/{z}/{x}/{y}.png"
@@ -98,6 +99,15 @@
         time: "{{scan.date }}"
       });
       scan_list.push(customer_scan_{{ scan.date|date:"Ymd" }})
+      var new_entry = {
+                        "<span class='text-secondary'>{{ scan.date|date:"j E Y" }}</span>":
+                        customer_scan_{{ scan.date|date:"Ymd" }}
+                      }
+      var scan_list_test = $.extend(scan_list_test, new_entry)
+
+      {% if forloop.first %}
+        customer_scan_{{ scan.date|date:"Ymd" }}.addTo(map)
+      {% endif %}
 
     {% endfor %}
 
@@ -106,9 +116,13 @@
 
     // TIME SLIDER
     layerGroup = L.layerGroup(scan_list);
-    var sliderControl = L.control.sliderControl({position: "topright", layer:layerGroup, no_of_layers:scan_list.length, alwaysShowDate:false});
-    map.addControl(sliderControl);
-    sliderControl.startSlider();
+
+    //var sliderControl = L.control.sliderControl({position: "topright", layer:layerGroup, no_of_layers:scan_list.length, alwaysShowDate:true, follow:3});
+    //map.addControl(sliderControl);
+    //sliderControl.startSlider();
+    L.control.layers(null,scan_list_test,{collapsed:false}).addTo(map)
+
+
 
   </script>
 {% endblock %}
