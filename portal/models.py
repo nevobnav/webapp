@@ -52,6 +52,7 @@ class Scan(models.Model):
         return self.date.strftime('%Y-%m-%d')
 
 class Logbook(models.Model):
+    time = models.DateTimeField(auto_now_add=True, null=True,blank=True)
     action = models.CharField(max_length=64)
     ip = models.GenericIPAddressField(null=True)
     username = models.CharField(max_length=256, null=True)

@@ -137,6 +137,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+ADMINS = [('Kaz','info@vanboven-drones.nl')]
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

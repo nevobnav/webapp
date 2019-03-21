@@ -1,4 +1,5 @@
 from django.db.models.signals import post_save
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
@@ -16,10 +17,12 @@ def save_customer(sender, instance, **kwargs):
     instance.customer.save()
 
 
+# Track user logins according to https://stackoverflow.com/questions/37618473/how-can-i-log-both-successful-and-failed-login-and-logout-attempts-in-django
 @receiver(user_logged_in)
 def user_logged_in_callback(sender, request, user, **kwargs):
     ip = request.META.get('REMOTE_ADDR')
-    Logbook.objects.create(action='user_logged_in', ip=ip, username=user.username)
+    if ip != '127.0.0.1':
+        Logbook.objects.create(action='user_logged_in', ip=ip, username=user.username)
 
 
 @receiver(user_logged_out)

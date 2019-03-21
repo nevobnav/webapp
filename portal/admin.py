@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Plot, Scan, Customer
+from .models import Plot, Scan, Customer, Logbook
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 
@@ -21,6 +21,7 @@ class CustomLeafletGeoAdmin(LeafletGeoAdmin):
 admin.site.register(Plot,CustomLeafletGeoAdmin)
 admin.site.register(Scan)
 admin.site.register(Customer)
+admin.site.register(Logbook)
 
 
 #Overview of map tiles: https://www.spatialbias.com/2018/02/qgis-3.0-xyz-tile-layers/
