@@ -3,6 +3,23 @@ from .models import Plot, Scan, Customer, Logbook
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 
+# class MyPolygonFieldAdmin:(admin.PolygonFieldAdmin):
+#     formfield_overrides = {
+#     models.PolygonField:{'widget': Textarea
+#     #check widget options (TextField, textarea)
+#     }
+#     }
+
+class ScanAdmin(admin.ModelAdmin):
+    model = Scan
+    list_display = ['date', 'plot', ]
+    admin_order_field = 'date'
+
+class LogbookAdmin(admin.ModelAdmin):
+    model = Logbook
+    list_display = ['time','username','action','ip',]
+
+
 class CustomLeafletGeoAdmin(LeafletGeoAdmin):
     settings_overrides = {
        'DEFAULT_CENTER': (51.9951071, 5.26033378),
@@ -15,13 +32,19 @@ class CustomLeafletGeoAdmin(LeafletGeoAdmin):
             ('OSM', 'http://tile.openstreetmap.org/{z}/{x}/{y}.png', 'OpenStreetMap'),
             ('AG', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', 'ArgGIS'),
             # ('AAN', 'https://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0/aan/EPSG:28992/{z}/{y}/{x}.png', 'AAN')
-        ]
+        ],
+        'RESET_VIEW': False
     }
 
+
+    map_height = '800px'
+
 admin.site.register(Plot,CustomLeafletGeoAdmin)
-admin.site.register(Scan)
+admin.site.register(Scan, ScanAdmin)
 admin.site.register(Customer)
-admin.site.register(Logbook)
+admin.site.register(Logbook,LogbookAdmin)
+
+
 
 
 #Overview of map tiles: https://www.spatialbias.com/2018/02/qgis-3.0-xyz-tile-layers/

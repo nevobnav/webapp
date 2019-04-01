@@ -12,7 +12,6 @@ class Customer(models.Model):
         all_plots = Plot.objects.filter(customer_id=self.pk).order_by('-startdate')
         return all_plots
 
-
 class Plot(models.Model):
     name = models.CharField(max_length=100)
     street = models.CharField(max_length=100)
@@ -49,7 +48,7 @@ class Scan(models.Model):
     date = models.DateField(default=date.today())
 
     def __str__(self):
-        return self.date.strftime('%Y-%m-%d')
+        return (self.date.strftime('%Y-%m-%d') + ' - ' + str(self.plot))
 
 class Logbook(models.Model):
     time = models.DateTimeField(auto_now_add=True, null=True,blank=True)

@@ -21,6 +21,7 @@ def save_customer(sender, instance, **kwargs):
 # Track user logins according to https://stackoverflow.com/questions/37618473/how-can-i-log-both-successful-and-failed-login-and-logout-attempts-in-django
 known_IPs = { 'localhost':'127.0.0.1',
               'TU office':'145.94.159.42',
+              'Kaz home': '83.86.147.113',
               }
 
 @receiver(user_logged_in)

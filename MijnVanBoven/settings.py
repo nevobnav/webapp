@@ -161,7 +161,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = OPERATIONS_MAIL
 EMAIL_HOST_PASSWORD = OPERATIONS_MAIL_PASS
 
-
 try:
     from .local_settings import *
 except ImportError as e:
