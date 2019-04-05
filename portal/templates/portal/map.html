@@ -23,24 +23,20 @@
   <!-- Legend -->
   <link rel="stylesheet" href="{% static "portal/css/layers_legend_box.css" %}" />
 
+  <!-- leaflet Draw -->
+  <!-- <link rel="stylesheet" href="{% static "portal/css/L.draw.css" %}" /> -->
+  <!-- <script src="{% static "portal/js/L.draw.js" %} "></script> -->
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.2/dist/leaflet.draw-src.css" />
+  <script src="https://unpkg.com/leaflet-draw@1.0.2/dist/leaflet.draw-src.js"></script>
+  <script src="{% static "portal/js/leaflet-measure-path.js" %} "></script>
+  <link rel="stylesheet" href="{% static "portal/css/leaflet-measure-path.css" %}" />
+
   <!-- Time Slider -->
   <script src="{% static "portal/js/SliderControl.js" %}" type="text/javascript"></script>
 
-  <!-- Locate button -->
-  <script src="{% static "portal/js/L.Control.Locate.min.js" %}" ></script>
-  <script src="{% static "portal/js/L.Control.Locate.min.js.map" %}"></script>
-  <link rel="stylesheet" href="{% static "portal/css/L.Control.Locate.css" %}">
-  <link rel="stylesheet" href="{% static "portal/css/L.Control.Locate.min.css" %}">
-  <link rel="stylesheet" href="{% static "portal/css/L.Control.Locate.min.css.map" %}">
-
   <!-- Heat map -->
   <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
-
-  <!-- MarkerCluster -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
 
 
   <!-- creating script sources based on user ID-->
@@ -84,7 +80,6 @@
       maxZoom:max_zoom
     }).addTo(map);
 
-
     // LAYERS
     var scan_list = []
     var scan_list_test = []
@@ -111,16 +106,36 @@
 
     {% endfor %}
 
-      // GROUP LAYERS
+    // My draw Toolbar
+    var drawnItems = new L.FeatureGroup()
+    map.addLayer(drawnItems)
+    var drawControl = new L.Control.Draw({
+      draw:{polyline: {shapeOptions: {showMeasurements: {showOnHover: true}}},
+            marker: false,
+            circlemarker: false,
+            rectangle: false,
+            circle: false,
+        },
+      edit: {
+        featureGroup: drawnItems,
+        edit: false
+      }
+    });
+
+    map.addControl(drawControl);
+    map.on(L.Draw.Event.CREATED, function (e) {
+       var layer = e.layer;
+       drawnItems.addLayer(layer);
+    });
 
 
-    // TIME SLIDER
+    // LAYER CONTROL
     layerGroup = L.layerGroup(scan_list);
 
     //var sliderControl = L.control.sliderControl({position: "topright", layer:layerGroup, no_of_layers:scan_list.length, alwaysShowDate:true, follow:3});
     //map.addControl(sliderControl);
     //sliderControl.startSlider();
-    L.control.layers(null,scan_list_test,{collapsed:false}).addTo(map)
+    L.control.layers(scan_list_test,null,{collapsed:false}).addTo(map)
 
 
 
