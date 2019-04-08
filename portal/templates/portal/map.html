@@ -36,8 +36,6 @@
   <!-- nlMaps -->
   <script src="https://rawgit.com/geo-frontend/nlmaps/master/dist/nlmaps.iife.js"></script>
 
-
-
   <!-- Time Slider -->
   <script src="{% static "portal/js/SliderControl.js" %}" type="text/javascript"></script>
 
@@ -148,8 +146,7 @@
     };
 
     // LAYER CONTROL
-    L.control.layers(baseMaps,overlayMaps,{collapsed:false}).addTo(map)
-    // L.control.layers(scan_list_test,null,{collapsed:false}).addTo(map)
+    L.control.layers(baseMaps,null,{collapsed:false}).addTo(map)
 
 
     //layerGroup = L.layerGroup(scan_list);
