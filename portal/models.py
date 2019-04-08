@@ -9,7 +9,7 @@ class Customer(models.Model):
     def __str__(self):
         return str(self.customer_name)
     def get_all_plots(self):
-        all_plots = Plot.objects.filter(customer_name=self.pk).order_by('-startdate')
+        all_plots = Plot.objects.filter(customer_id=self.pk).order_by('-startdate')
         return all_plots
 
 class Plot(models.Model):
