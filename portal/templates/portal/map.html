@@ -46,7 +46,7 @@
   <!-- creating script sources based on user ID-->
   <script>
     var username = "{{ user.username }}"
-    var customer_id = "{{ user.customer.customer_id }}"
+    var customer_name = "{{ user.customer.customer_name }}"
     var plotname = "{{ this_plot.name }}"
     var plotid = "{{ this_plot.id }}"
     var basic_data_path = "{{ MEDIA_URL }}data/"
@@ -88,7 +88,7 @@
     var scan_list = []
     {% for scan in scans %}
       var scan_date = {{ scan.date|date:"Ymd" }}
-      var scan_path = basic_data_path + customer_id + "/" + plotname + "/" + scan_date + "/{z}/{x}/{y}.png"
+      var scan_path = basic_data_path + customer_name + "/" + plotname + "/" + scan_date + "/{z}/{x}/{y}.png"
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,
         maxZoom: max_zoom,
