@@ -3,6 +3,7 @@ env
 *.pyc
 __pycache__
 MijnVanBoven/local_settings.py
+portal/migrations
 db.sqlite3
 portal/static/portal/data
 media

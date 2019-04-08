@@ -27,10 +27,16 @@
   <!-- <link rel="stylesheet" href="{% static "portal/css/L.draw.css" %}" /> -->
   <!-- <script src="{% static "portal/js/L.draw.js" %} "></script> -->
 
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.2/dist/leaflet.draw-src.css" />
   <script src="https://unpkg.com/leaflet-draw@1.0.2/dist/leaflet.draw-src.js"></script>
   <script src="{% static "portal/js/leaflet-measure-path.js" %} "></script>
   <link rel="stylesheet" href="{% static "portal/css/leaflet-measure-path.css" %}" />
+
+  <!-- nlMaps -->
+  <script src="https://rawgit.com/geo-frontend/nlmaps/master/dist/nlmaps.iife.js"></script>
+
+
 
   <!-- Time Slider -->
   <script src="{% static "portal/js/SliderControl.js" %}" type="text/javascript"></script>
@@ -82,7 +88,6 @@
 
     // LAYERS
     var scan_list = []
-    var scan_list_test = []
     {% for scan in scans %}
       var scan_date = {{ scan.date|date:"Ymd" }}
       var scan_path = basic_data_path + customer_id + "/" + plotname + "/" + scan_date + "/{z}/{x}/{y}.png"
@@ -93,18 +98,25 @@
         tms: true,
         time: "{{scan.date }}"
       });
-      scan_list.push(customer_scan_{{ scan.date|date:"Ymd" }})
+      //scan_list.push(customer_scan_{{ scan.date|date:"Ymd" }})
       var new_entry = {
                         "<span class='text-secondary'>{{ scan.date|date:"j E Y" }}</span>":
                         customer_scan_{{ scan.date|date:"Ymd" }}
                       }
-      var scan_list_test = $.extend(scan_list_test, new_entry)
+      var scan_list = $.extend(scan_list, new_entry)
 
       {% if forloop.first %}
         customer_scan_{{ scan.date|date:"Ymd" }}.addTo(map)
       {% endif %}
 
     {% endfor %}
+
+    //Import shape from DB
+    //var plot = L.polygon({{ shape.coords }})
+    var latlongs = {{ latlong }};
+    var plotshape = L.polygon(latlongs, {color: 'red'});
+    var plotlayer = L.layerGroup([plotshape]);
+    var aerial = nlmaps.leaflet.bgLayer('luchtfoto')
 
     // My draw Toolbar
     var drawnItems = new L.FeatureGroup()
@@ -129,14 +141,29 @@
        drawnItems.addLayer(layer);
     });
 
+    var baseMaps = scan_list;
+    var overlayMaps = {
+        "Perceel": plotlayer,
+        "Luchtfoto's": aerial
+    };
 
     // LAYER CONTROL
-    layerGroup = L.layerGroup(scan_list);
+    L.control.layers(baseMaps,overlayMaps,{collapsed:false}).addTo(map)
+    // L.control.layers(scan_list_test,null,{collapsed:false}).addTo(map)
 
+
+    //layerGroup = L.layerGroup(scan_list);
     //var sliderControl = L.control.sliderControl({position: "topright", layer:layerGroup, no_of_layers:scan_list.length, alwaysShowDate:true, follow:3});
     //map.addControl(sliderControl);
     //sliderControl.startSlider();
-    L.control.layers(scan_list_test,null,{collapsed:false}).addTo(map)
+
+    // var aan = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/brpgewaspercelen/wms?", {
+    // layers: 'brpgewaspercelen',
+    // format:'image/png',
+    // transparent: true,
+    // tile:true
+    // });
+    // aan.addTo(map);
 
 
 
