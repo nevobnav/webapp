@@ -1,6 +1,8 @@
 env
 *.DS_Store
 *.pyc
+*.py~
+/static
 __pycache__
 MijnVanBoven/local_settings.py
 db.sqlite3
