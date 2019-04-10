@@ -89,9 +89,8 @@
     var base_sat =  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       id: 'mapbox.satellite',
       accessToken: 'pk.eyJ1IjoiYm5vb3RlYm9zIiwiYSI6ImNqcXA3ZHAzODBtbWM0MnBzZm5vbGRndmUifQ.H2zjIsYA5P2SFxZlSBIYjA',
-      time: "2013-01-22 8:42:26+01",
       maxZoom:max_zoom
-    }).addTo(map);
+    });
 
     var aerialRGB = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?", {
     layers: 'Actueel_ortho25',
@@ -176,13 +175,11 @@
        drawnItems.addLayer(layer);
     });
 
-    var baseMaps = {};
+    var baseMaps = {"Luchtfoto's":aerialRGB ,"Sateliet":base_sat};
 
     var overlayMaps = {
       "Scans": scan_list,
       "Extra's": {
-        "Luchtfoto's": aerialRGB,
-        "Infrarood's":aerialIR,
         {% if user.is_staff %}
         "No-Fly":dronezones
         {% endif %}
@@ -199,8 +196,6 @@
     //var sliderControl = L.control.sliderControl({position: "topright", layer:layerGroup, no_of_layers:scan_list.length, alwaysShowDate:true, follow:3});
     //map.addControl(sliderControl);
     //sliderControl.startSlider();
-
-
 
 
 
