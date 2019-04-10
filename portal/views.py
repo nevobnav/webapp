@@ -8,14 +8,20 @@ from geoalchemy2.shape import to_shape
 import shapely
 
 
-
-def get_all_plots(request_session):
-    if request_session.user.is_authenticated:
-        user = request_session.user
-        plots = Plot.objects.filter(customer_id=user.customer.pk).order_by('-startdate')
-    else:
-        plots = ''
-    return plots
+#
+# def get_all_plots(request_session):
+#     if request_session.user.is_authenticated:
+#         user = request_session.user
+#         if user.is_staff:
+#             plots = Plot.objects.all().order_by('-startdate')
+#             print('Staff!')
+#         else:
+#             plots = Plot.objects.filter(customer_id=user.customer.pk).order_by('-startdate')
+#             print('NoStaff')
+#     else:
+#         plots = ''
+#     print('ran scipt')
+#     return plots
 
 
 def home(request):
@@ -25,7 +31,6 @@ def home(request):
 @login_required(login_url='/login/')
 def map(request, map_id):
     user = request.user
-    plots = get_all_plots(request)
     this_plot =  Plot.objects.get(id=map_id)
     scans = Scan.objects.filter(plot=this_plot).order_by('date')
 
@@ -35,7 +40,7 @@ def map(request, map_id):
     plot_polygon_latlong = str(list(rev_coords)).replace('(','[').replace(')',']') #Create JavaScript latlong line
 
 
-    if user.customer.pk == this_plot.customer_id:
+    if user.customer.pk == this_plot.customer_id or user.is_staff:
         context = {
         'map_id' : map_id,
         'this_plot' : this_plot,
@@ -49,7 +54,7 @@ def map(request, map_id):
 @login_required(login_url='/login/')
 def user_profile(request):
     user = request.user
-    plots = get_all_plots(request)
+    plots = user.customer.get_all_plots()
     acreage = 0
     for plot in plots:
         acreage += plot.area

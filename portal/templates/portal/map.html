@@ -24,10 +24,6 @@
   <link rel="stylesheet" href="{% static "portal/css/layers_legend_box.css" %}" />
 
   <!-- leaflet Draw -->
-  <!-- <link rel="stylesheet" href="{% static "portal/css/L.draw.css" %}" /> -->
-  <!-- <script src="{% static "portal/js/L.draw.js" %} "></script> -->
-
-
   <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.2/dist/leaflet.draw-src.css" />
   <script src="https://unpkg.com/leaflet-draw@1.0.2/dist/leaflet.draw-src.js"></script>
   <script src="{% static "portal/js/leaflet-measure-path.js" %} "></script>
@@ -41,6 +37,19 @@
 
   <!-- Heat map -->
   <script src="https://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
+
+  <!-- EasyButton -->
+  <script src="{% static "portal/js/L.EasyButton.js" %} "></script>
+  <link rel="stylesheet" href="{% static "portal/css/L.EasyButton.css" %}" />
+
+  <!-- GroupedLayers -->
+  <script src="{% static "portal/js/L.GroupedLayerControl.js" %} "></script>
+  <link rel="stylesheet" href="{% static "portal/css/L.GroupedLayerControl.css" %}" />
+
+  <!-- fontawesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+
 
 
   <!-- creating script sources based on user ID-->
@@ -63,8 +72,9 @@
     var lat = {{ this_plot.shape.centroid.y }}
     var lon = {{ this_plot.shape.centroid.x }}
     var center_coords = [lat, lon]
-    var max_native_zoom = 24
-    var max_zoom = 25
+    var init_zoom = 17
+    var max_native_zoom = 23
+    var max_zoom = 24
 
     // initalize slider control
     var sliderControl = null;
@@ -72,17 +82,44 @@
     // create an empty map and base map
     var map = L.map('map', {
       center: center_coords,
-      zoom: 17,
+      zoom: init_zoom,
       crs: L.CRS.EPSG3857,
     });
 
     var base_sat =  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       id: 'mapbox.satellite',
       accessToken: 'pk.eyJ1IjoiYm5vb3RlYm9zIiwiYSI6ImNqcXA3ZHAzODBtbWM0MnBzZm5vbGRndmUifQ.H2zjIsYA5P2SFxZlSBIYjA',
       time: "2013-01-22 8:42:26+01",
       maxZoom:max_zoom
     }).addTo(map);
+
+    var aerialRGB = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?", {
+    layers: 'Actueel_ortho25',
+    format:'image/png',
+    transparent: true,
+    tile:true,
+    maxZoom:max_zoom
+    });
+    aerialRGB.addTo(map);
+
+    var aerialIR = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wms?", {
+    layers: 'Actueel_ortho25IR',
+    format:'image/png',
+    transparent: true,
+    tile:true,
+    maxZoom:max_zoom,
+    });
+
+    {% if user.is_staff %}
+      var dronezones = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/dronenoflyzones/wms?", {
+      layers: 'luchtvaartgebieden_zonder_natura2000',
+      format:'image/png',
+      transparent: true,
+      tile:true,
+      maxZoom:max_zoom
+      });
+    {% endif %}
+
 
     // LAYERS
     var scan_list = []
@@ -98,7 +135,7 @@
       });
       //scan_list.push(customer_scan_{{ scan.date|date:"Ymd" }})
       var new_entry = {
-                        "<span class='text-secondary'>{{ scan.date|date:"j E Y" }}</span>":
+                        "{{ scan.date|date:"j E Y" }}":
                         customer_scan_{{ scan.date|date:"Ymd" }}
                       }
       var scan_list = $.extend(scan_list, new_entry)
@@ -112,9 +149,9 @@
     //Import shape from DB
     //var plot = L.polygon({{ shape.coords }})
     var latlongs = {{ latlong }};
-    var plotshape = L.polygon(latlongs, {color: 'red'});
-    var plotlayer = L.layerGroup([plotshape]);
-    var aerial = nlmaps.leaflet.bgLayer('luchtfoto')
+    var plotshape = L.polygon(latlongs, {fillOpacity: 0, color: 'red'});
+    var plotlayer = L.layerGroup([plotshape]).addTo(map);
+    // var aerial = nlmaps.leaflet.bgLayer('luchtfoto')
 
     // My draw Toolbar
     var drawnItems = new L.FeatureGroup()
@@ -139,28 +176,31 @@
        drawnItems.addLayer(layer);
     });
 
-    var baseMaps = scan_list;
+    var baseMaps = {};
+
     var overlayMaps = {
-        "Perceel": plotlayer,
-        "Luchtfoto's": aerial
+      "Scans": scan_list,
+      "Extra's": {
+        "Luchtfoto's": aerialRGB,
+        "Infrarood's":aerialIR,
+        {% if user.is_staff %}
+        "No-Fly":dronezones
+        {% endif %}
+      }
     };
 
     // LAYER CONTROL
-    L.control.layers(baseMaps,null,{collapsed:false}).addTo(map)
-
+    L.control.groupedLayers(baseMaps, overlayMaps,{collapsed:false, exclusiveGroups:['Scans']}).addTo(map);
+    L.easyButton('fa-vector-square',function(btn,map){
+      map.setView([lat, lon], init_zoom);
+    },'Terug naar perceel').addTo(map);
 
     //layerGroup = L.layerGroup(scan_list);
     //var sliderControl = L.control.sliderControl({position: "topright", layer:layerGroup, no_of_layers:scan_list.length, alwaysShowDate:true, follow:3});
     //map.addControl(sliderControl);
     //sliderControl.startSlider();
 
-    // var aan = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/brpgewaspercelen/wms?", {
-    // layers: 'brpgewaspercelen',
-    // format:'image/png',
-    // transparent: true,
-    // tile:true
-    // });
-    // aan.addTo(map);
+
 
 
 

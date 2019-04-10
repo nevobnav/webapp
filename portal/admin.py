@@ -3,12 +3,6 @@ from .models import Plot, Scan, Customer, Logbook
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 
-# class MyPolygonFieldAdmin:(admin.PolygonFieldAdmin):
-#     formfield_overrides = {
-#     models.PolygonField:{'widget': Textarea
-#     #check widget options (TextField, textarea)
-#     }
-#     }
 
 class ScanAdmin(admin.ModelAdmin):
     model = Scan
@@ -22,21 +16,18 @@ class LogbookAdmin(admin.ModelAdmin):
 
 class CustomLeafletGeoAdmin(LeafletGeoAdmin):
     settings_overrides = {
+    #Info from https://pypi.org/project/django-leaflet/0.19.0/
        'DEFAULT_CENTER': (51.9951071, 5.26033378),
        'DEFAULT_ZOOM': 8,
        'ATTRIBUTION_PREFIX': 'VanBoven',
        'TILES': [
             # base layers by preference
-            # ('OSM', 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', 'Google Satellite'),
             ('GM', 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', 'Google Satellite'),
             ('OSM', 'http://tile.openstreetmap.org/{z}/{x}/{y}.png', 'OpenStreetMap'),
             ('AG', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', 'ArgGIS'),
-            # ('AAN', 'https://geodata.nationaalgeoregister.nl/tiles/service/tms/1.0.0/aan/EPSG:28992/{z}/{y}/{x}.png', 'AAN')
         ],
-        'RESET_VIEW': False
+        'RESET_VIEW': False,
     }
-
-
     map_height = '800px'
 
 admin.site.register(Plot,CustomLeafletGeoAdmin)

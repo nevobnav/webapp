@@ -1,0 +1,19 @@
+.leaflet-control-layers-group-name {
+  font-size: bold .75rem;
+  font-family: 'Roboto Condensed', sans-serif;
+  text-transform: uppercase;
+  margin-bottom: .2em;
+  margin-left: 3px;
+  color: #222222;
+}
+
+.leaflet-control-layers-group {
+  margin-bottom: .5em;
+  color: #777;
+
+}
+
+.leaflet-control-layers-scrollbar {
+  overflow-y: scroll;
+  padding-right: 10px;
+}
