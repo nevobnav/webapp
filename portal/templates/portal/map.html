@@ -46,6 +46,10 @@
   <script src="{% static "portal/js/L.GroupedLayerControl.js" %} "></script>
   <link rel="stylesheet" href="{% static "portal/css/L.GroupedLayerControl.css" %}" />
 
+  <!-- FillPattern -->
+  <script src="{% static "portal/js/L.fillPattern.js" %} "></script>
+
+
   <!-- fontawesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
@@ -146,9 +150,8 @@
     {% endfor %}
 
     //Import shape from DB
-    //var plot = L.polygon({{ shape.coords }})
     var latlongs = {{ latlong }};
-    var plotshape = L.polygon(latlongs, {fillOpacity: 0, color: 'red'});
+    var plotshape = L.polygon(latlongs, {fill: 'url({% static "portal/images/logo_white_small_transparent.png" %})', fillOpacity: 1,color: 'blue'});
     var plotlayer = L.layerGroup([plotshape]).addTo(map);
     // var aerial = nlmaps.leaflet.bgLayer('luchtfoto')
 
