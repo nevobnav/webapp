@@ -162,7 +162,7 @@
     var plotshape = L.polygon(latlongs, {fillOpacity: 0.0, color: 'red'});
     {% else %}
       var plotshape = L.polygon(latlongs, {fill: 'red', fillOpacity: 0.3, color: 'red'});
-      plotshape.bindPopup("Nog geen drone-vluchten beschikbaar");
+      plotshape.bindPopup("Nog geen dronebeelden beschikbaar.");
         plotshape.on('mouseover', function (e) {
             this.openPopup();
         });
