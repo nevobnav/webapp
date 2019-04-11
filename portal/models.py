@@ -11,7 +11,7 @@ class Customer(models.Model):
     def get_all_plots(self):
         user = self.user
         if user.is_staff:
-            all_plots = Plot.objects.all().order_by('-startdate')
+            all_plots = Plot.objects.all().reverse().order_by('-name')
         else:
             all_plots = Plot.objects.filter(customer_id=self.pk).order_by('-startdate')
         return all_plots
