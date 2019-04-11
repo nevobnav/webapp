@@ -90,8 +90,13 @@
       crs: L.CRS.EPSG3857,
     });
 
+    // Scale bar
+    var scalecontrol = L.control.scale({
+      imperial: false
+    }).addTo(map);
+
     var base_sat =  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-      id: 'mapbox.satellite',
+      id: 'mapbox.streets-satellite',
       accessToken: 'pk.eyJ1IjoiYm5vb3RlYm9zIiwiYSI6ImNqcXA3ZHAzODBtbWM0MnBzZm5vbGRndmUifQ.H2zjIsYA5P2SFxZlSBIYjA',
       maxZoom:max_zoom
     });
@@ -151,9 +156,25 @@
 
     //Import shape from DB
     var latlongs = {{ latlong }};
-    var plotshape = L.polygon(latlongs, {fill: 'url({% static "portal/images/logo_white_small_transparent.png" %})', fillOpacity: 1,color: 'blue'});
+
+    // Show gif instead of tiles when no scans are available
+    {% if scans %}
+    var plotshape = L.polygon(latlongs, {fillOpacity: 0.0, color: 'red'});
+    {% else %}
+      var plotshape = L.polygon(latlongs, {fill: 'red', fillOpacity: 0.3, color: 'red'});
+      plotshape.bindPopup("Nog geen drone-vluchten beschikbaar");
+        plotshape.on('mouseover', function (e) {
+            this.openPopup();
+        });
+        plotshape.on('mouseout', function (e) {
+            this.closePopup();
+        });
+    {% endif %}
+
     var plotlayer = L.layerGroup([plotshape]).addTo(map);
+
     // var aerial = nlmaps.leaflet.bgLayer('luchtfoto')
+
 
     // My draw Toolbar
     var drawnItems = new L.FeatureGroup()
@@ -178,7 +199,7 @@
        drawnItems.addLayer(layer);
     });
 
-    var baseMaps = {"Luchtfoto's":aerialRGB ,"Sateliet":base_sat};
+    var baseMaps = {"Luchtfoto's":aerialRGB ,"Satelliet":base_sat};
 
     var overlayMaps = {
       "Scans": scan_list,
