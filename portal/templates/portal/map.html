@@ -55,7 +55,7 @@
   <!-- creating script sources based on user ID-->
   <script>
     var username = "{{ user.username }}"
-    var customer_name = "{{ user.customer.customer_name }}"
+    var customer_name = "{{ this_plot.customer.customer_name }}"
     var plotname = "{{ this_plot.name }}"
     var plotid = "{{ this_plot.id }}"
     var basic_data_path = "{{ MEDIA_URL }}data/"
