@@ -1,7 +1,8 @@
 .leaflet-measure-path-measurement {
     position: absolute;
-    font-size: 10px;
+    font-size: 22px;
     color: black;
+    white-space: nowrap;
     text-shadow: -1px  0 0 white,
                  -1px -1px 0 white,
                   0 -1px 0 white,
