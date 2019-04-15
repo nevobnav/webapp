@@ -25,6 +25,7 @@ class CustomLeafletGeoAdmin(LeafletGeoAdmin):
             ('GM', 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', 'Google Satellite'),
             ('OSM', 'http://tile.openstreetmap.org/{z}/{x}/{y}.png', 'OpenStreetMap'),
             ('AG', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', 'ArgGIS'),
+            ('LF', 'https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wmts/Actueel_ortho25/EPSG:3857/{z}/{x}/{y}.jpeg', 'Luchtfoto')
         ],
         'RESET_VIEW': False,
     }
