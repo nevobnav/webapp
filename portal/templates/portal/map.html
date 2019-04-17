@@ -145,7 +145,7 @@
                       }
       var scan_list = $.extend(scan_list, new_entry)
 
-      {% if forloop.first %}
+      {% if forloop.last %}
         customer_scan_{{ scan.date|date:"Ymd" }}.addTo(map)
       {% endif %}
 
@@ -208,7 +208,7 @@
     };
 
     // LAYER CONTROL
-    L.control.groupedLayers(baseMaps, overlayMaps,{collapsed:false, exclusiveGroups:['Scans']}).addTo(map);
+    L.control.groupedLayers(baseMaps, overlayMaps,{collapsed:false, exclusiveGroups:['Dronebeelden']}).addTo(map);
     L.easyButton('fa-vector-square',function(btn,map){
       map.setView([lat, lon], init_zoom);
     },'Terug naar perceel').addTo(map);
