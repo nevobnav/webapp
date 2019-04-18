@@ -1,9 +1,11 @@
 {% extends "portal/base.html" %}
 {% block content%}
-<h2>Je bent uitgelogd</h2>
-  <div class="border-top pt-3">
-    <small class="text-muted">
-      <a href="{% url 'portal-login' %}">Opnieuw inloggen</a>
-    </small>
-  </div>
+<div class="container", style="padding-top: 24px">
+  <h2>Je bent uitgelogd</h2>
+    <div class="border-top pt-3">
+      <small class="text-muted">
+        <a href="{% url 'portal-login' %}">Opnieuw inloggen</a>
+      </small>
+    </div>
+</div>
 {% endblock content %}
