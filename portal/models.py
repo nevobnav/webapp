@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
-from datetime import date
+from datetime import date,time
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -50,9 +50,10 @@ class Plot(models.Model):
 class Scan(models.Model):
     plot = models.ForeignKey(Plot, on_delete=models.CASCADE)
     date = models.DateField(default=date.today())
+    time = models.TimeField(default= time(2,0))
 
     def __str__(self):
-        return (self.date.strftime('%Y-%m-%d') + ' - ' + str(self.plot))
+        return (self.date.strftime('%Y-%m-%d') + ' ' + self.time.strftime('%H:%M') + ' - ' + str(self.plot))
 
 class Logbook(models.Model):
     time = models.DateTimeField(auto_now_add=True, null=True,blank=True)

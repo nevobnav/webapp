@@ -130,7 +130,8 @@
     var scan_list = []
     {% for scan in scans %}
       var scan_date = {{ scan.date|date:"Ymd" }}
-      var scan_path = basic_data_path + customer_name + "/" + plotname + "/" + scan_date + "/{z}/{x}/{y}.png"
+      var scan_time = '{{ scan.time|date:"Hi" }}'
+      var scan_path = basic_data_path + customer_name + "/" + plotname + "/" + scan_date + scan_time + "/{z}/{x}/{y}.png"
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,
         maxZoom: max_zoom,
