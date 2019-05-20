@@ -1,5 +1,6 @@
 {% extends "portal/base.html" %}
 {% load static %}
+{% load i18n %}
 
 
 {% block header %}
@@ -139,15 +140,29 @@
         tms: true,
         time: "{{scan.date }}"
       });
-      //scan_list.push(customer_scan_{{ scan.date|date:"Ymd" }})
-      var new_entry = {
-                        "{{ scan.date|date:"j E Y" }}":
-                        customer_scan_{{ scan.date|date:"Ymd" }}
-                      }
-      var scan_list = $.extend(scan_list, new_entry)
+
+
+      // Setting language to Dutch to format date
+      {% language 'nl' %}
+
+      // Create new layer and give title. Remove time if its 02:00 (which means no
+      // time is available)
+
+        {% if scan.time|date:"Hi" == '0200' %}
+          var new_entry = {"{{ scan.date|date:"j E" }}":
+                            customer_scan_{{ scan.date|date:"Ymd" }}};
+        {% else %}
+          var new_entry = {"{{ scan.date|date:"j E" }} - {{ scan.time|date:"H:i" }}":
+                            customer_scan_{{ scan.date|date:"Ymd" }}};
+        {% endif %}
+
+      {% endlanguage %}
+
+      // Add this layer to the list of scan layers
+      var scan_list = $.extend(scan_list, new_entry);
 
       {% if forloop.last %}
-        customer_scan_{{ scan.date|date:"Ymd" }}.addTo(map)
+        customer_scan_{{ scan.date|date:"Ymd" }}.addTo(map);
       {% endif %}
 
     {% endfor %}
@@ -225,11 +240,6 @@
     L.easyButton('fa-vector-square',function(btn,map){
       map.setView([lat, lon], init_zoom);
     },'Terug naar perceel').addTo(map);
-
-    //layerGroup = L.layerGroup(scan_list);
-    //var sliderControl = L.control.sliderControl({position: "topright", layer:layerGroup, no_of_layers:scan_list.length, alwaysShowDate:true, follow:3});
-    //map.addControl(sliderControl);
-    //sliderControl.startSlider();
 
 
 
