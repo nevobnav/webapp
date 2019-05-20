@@ -45,7 +45,7 @@ def map(request, map_id):
         'map_id' : map_id,
         'this_plot' : this_plot,
         'latlong': plot_polygon_latlong,
-        'scans' : scans
+        'scans' : scans,
         }
         return render(request, 'portal/map.html', context=context)
     else:

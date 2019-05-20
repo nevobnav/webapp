@@ -75,8 +75,7 @@
     var lon = {{ this_plot.shape.centroid.x }}
     var center_coords = [lat, lon]
     var init_zoom = 17
-    var max_zoom = 23
-    var max_native_zoom = max_zoom + 1
+    var max_zoom = 24
 
     // initalize slider control
     var sliderControl = null;
@@ -96,7 +95,7 @@
     var base_sat =  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
       id: 'mapbox.streets-satellite',
       accessToken: 'pk.eyJ1IjoiYm5vb3RlYm9zIiwiYSI6ImNqcXA3ZHAzODBtbWM0MnBzZm5vbGRndmUifQ.H2zjIsYA5P2SFxZlSBIYjA',
-      maxZoom:max_zoom
+      maxZoom:max_zoom,
     });
 
     var aerialRGB = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?", {
@@ -104,17 +103,10 @@
     format:'image/png',
     transparent: true,
     tile:true,
-    maxZoom:max_zoom
+    maxZoom:max_zoom,
     });
     aerialRGB.addTo(map);
 
-    var aerialIR = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/luchtfoto/infrarood/wms?", {
-    layers: 'Actueel_ortho25IR',
-    format:'image/png',
-    transparent: true,
-    tile:true,
-    maxZoom:max_zoom,
-    });
 
     {% if user.is_staff %}
       var dronezones = L.tileLayer.wms("https://geodata.nationaalgeoregister.nl/dronenoflyzones/wms?", {
@@ -122,7 +114,7 @@
       format:'image/png',
       transparent: true,
       tile:true,
-      maxZoom:max_zoom
+      maxZoom:max_zoom,
       });
     {% endif %}
 
@@ -133,8 +125,8 @@
       var scan_date = {{ scan.date|date:"Ymd" }}
       var scan_time = '{{ scan.time|date:"Hi" }}'
       var scan_path = basic_data_path + customer_name + "/" + plotname + "/" + scan_date + scan_time + "/{z}/{x}/{y}.png"
-      var scan_max_zoom = {{ scan.zoomlevel }};
-      var scan_max_native_zoom = {{ scan.zoomlevel }} + 1;
+      var scan_max_zoom = {{ scan.zoomlevel }} + 1;   //Increase zoom level by 1 to include a pixel-zoom
+      var scan_max_native_zoom = {{ scan.zoomlevel }};
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,
         maxZoom: scan_max_zoom,
@@ -142,8 +134,6 @@
         tms: true,
         time: "{{scan.date }}"
       });
-
-
 
       // Setting language to Dutch to format date
       {% language 'nl' %}
