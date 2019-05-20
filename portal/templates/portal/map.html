@@ -75,8 +75,8 @@
     var lon = {{ this_plot.shape.centroid.x }}
     var center_coords = [lat, lon]
     var init_zoom = 17
-    var max_native_zoom = 24
-    var max_zoom = 24
+    var max_zoom = 23
+    var max_native_zoom = max_zoom + 1
 
     // initalize slider control
     var sliderControl = null;
@@ -133,13 +133,16 @@
       var scan_date = {{ scan.date|date:"Ymd" }}
       var scan_time = '{{ scan.time|date:"Hi" }}'
       var scan_path = basic_data_path + customer_name + "/" + plotname + "/" + scan_date + scan_time + "/{z}/{x}/{y}.png"
+      var scan_max_zoom = {{ scan.zoomlevel }};
+      var scan_max_native_zoom = {{ scan.zoomlevel }} + 1;
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,
-        maxZoom: max_zoom,
-        maxNativeZoom: max_native_zoom,
+        maxZoom: scan_max_zoom,
+        maxNativeZoom: scan_max_native_zoom,
         tms: true,
         time: "{{scan.date }}"
       });
+
 
 
       // Setting language to Dutch to format date

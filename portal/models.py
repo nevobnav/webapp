@@ -51,6 +51,7 @@ class Scan(models.Model):
     plot = models.ForeignKey(Plot, on_delete=models.CASCADE)
     date = models.DateField(default=date.today())
     time = models.TimeField(default= time(2,0))
+    zoomlevel = models.PositiveSmallIntegerField(default = 23)
 
     def __str__(self):
         return (self.date.strftime('%Y-%m-%d') + ' ' + self.time.strftime('%H:%M') + ' - ' + str(self.plot))
