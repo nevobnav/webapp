@@ -127,12 +127,16 @@
       var scan_path = basic_data_path + customer_name + "/" + plotname + "/" + scan_date + scan_time + "/{z}/{x}/{y}.png"
       var scan_max_zoom = {{ scan.zoomlevel }} + 1;   //Increase zoom level by 1 to include a pixel-zoom
       var scan_max_native_zoom = {{ scan.zoomlevel }};
+      var scan_flight_altitude = {{ scan.flight_altitude }};
       var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
         minZoom: 15,
         maxZoom: scan_max_zoom,
         maxNativeZoom: scan_max_native_zoom,
         tms: true,
-        time: "{{scan.date }}"
+        time: "{{scan.date }}",
+
+        // pass along extra info from database
+        infobox_context: [scan_flight_altitude] // extra properties can be added in this array
       });
 
       // Setting language to Dutch to format date
@@ -234,6 +238,35 @@
       map.setView([lat, lon], init_zoom);
     },'Terug naar perceel').addTo(map);
 
+
+    // WIDGET SHOWING SCAN INFO
+
+    var info = L.control({position: 'bottomright'});
+
+    info.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+        this.update();
+        return this._div;
+    };
+
+    // function used to update 'infobox' content based on current layer clicked
+    info.update = function (infobox_context) {
+        this._div.innerHTML = (infobox_context ?
+            '<b> Vlieghoogte: </b>' + infobox_context[0] + ' m'
+            : '-');
+    };
+
+    info.addTo(map);
+    info.update([scan_flight_altitude]);  // on map creation, infobox content is pulled manually. LELIJK - fixen als er meer info in infobox_context komt!
+
+    // when a different layer is selected, the function 'onOverlayAdd' is fired
+    map.on('overlayadd', onOverlayAdd);
+
+    // function to push infobox_content to infobox
+    function onOverlayAdd(currentlayer){
+      // console.log('layer was clicked');
+      info.update(currentlayer.layer.options.infobox_context);
+    }
 
 
   </script>
