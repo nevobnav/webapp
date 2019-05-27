@@ -6,7 +6,7 @@ from leaflet.admin import LeafletGeoAdmin
 
 class ScanAdmin(admin.ModelAdmin):
     model = Scan
-    list_display = ['date', 'plot', ]
+    list_display = ['date', 'time', 'plot', 'zoomlevel','flight_altitude' ]
     admin_order_field = 'date'
 
 class LogbookAdmin(admin.ModelAdmin):
