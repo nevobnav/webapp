@@ -30,6 +30,7 @@ def map(request, map_id):
     if user.customer.pk == this_parent_plot.customer_id or user.is_staff:
         context = {
         'map_id' : map_id,
+        'this_parent_plot': this_parent_plot,
         'this_plot' : this_plot,
         'latlong': plot_polygon_latlong,
         'scans' : scans,
