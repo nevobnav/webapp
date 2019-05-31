@@ -3,25 +3,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.sessions.models import Session
 from django.http import HttpResponse
-from .models import Plot,Scan,Customer
+from .models import Plot,Scan,Customer, Parent_Plot
 from geoalchemy2.shape import to_shape
 import shapely
 
-
-#
-# def get_all_plots(request_session):
-#     if request_session.user.is_authenticated:
-#         user = request_session.user
-#         if user.is_staff:
-#             plots = Plot.objects.all().order_by('-startdate')
-#             print('Staff!')
-#         else:
-#             plots = Plot.objects.filter(customer_id=user.customer.pk).order_by('-startdate')
-#             print('NoStaff')
-#     else:
-#         plots = ''
-#     print('ran scipt')
-#     return plots
 
 
 def home(request):
@@ -31,16 +16,18 @@ def home(request):
 @login_required(login_url='/login/')
 def map(request, map_id):
     user = request.user
-    this_plot =  Plot.objects.get(id=map_id)
+    # this_plot =  Plot.objects.get(id=map_id)
+    this_parent_plot = Parent_Plot.objects.get(id=map_id)
+    this_plot = this_parent_plot.get_plot()
     scans = Scan.objects.filter(plot=this_plot).order_by('date')
 
     # #Generating langlong list of polygon shape
-    coords = this_plot.shape.coords[0] #Get coordinate tuple
+    coords = this_plot.plot_shape.coords[0] #Get coordinate tuple
     rev_coords = [(y, x) for x, y in coords] #Reverse lat/long
     plot_polygon_latlong = str(list(rev_coords)).replace('(','[').replace(')',']') #Create JavaScript latlong line
 
 
-    if user.customer.pk == this_plot.customer_id or user.is_staff:
+    if user.customer.pk == this_parent_plot.customer_id or user.is_staff:
         context = {
         'map_id' : map_id,
         'this_plot' : this_plot,

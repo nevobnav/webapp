@@ -34,6 +34,7 @@ class CustomLeafletGeoAdmin(LeafletGeoAdmin):
 admin.site.register(Plot,CustomLeafletGeoAdmin)
 admin.site.register(Scan, ScanAdmin)
 admin.site.register(Customer)
+# admin.site.register(Parent_Plot)
 admin.site.register(Logbook,LogbookAdmin)
 
 

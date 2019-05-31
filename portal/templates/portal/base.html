@@ -80,17 +80,17 @@
                 <span>Percelen</span>
               </h6>
               <ul class="nav flex-column mb-2">
-              {% for plot in user.customer.get_all_plots %}
+              {% for parent_plot in user.customer.get_all_parent_plots %}
 
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'portal-map' plot.id %}">
-                  {% if this_plot.pk == plot.pk %}
+                <a class="nav-link" href="{% url 'portal-map' parent_plot.id %}">
+                  {% if this_plot.parent_plot_id == parent_plot.pk %}
                     <span data-feather="check-square"></span> <!-- This is the icon -->
                   {% else %}
                     <span data-feather="square"></span> <!-- This is the icon -->
                   {% endif %}
-                  {{ plot.name }}
-                  <span class="text-secondary"> ({{ plot.area | floatformat}} ha.)</span>
+                  {{ parent_plot.name }}
+                  <span class="text-secondary"> ({{ parent_plot.plot_set.all.first.area | floatformat}} ha.)</span>
                 </a>
               </li>
               {% endfor %}

@@ -8,35 +8,54 @@ class Customer(models.Model):
     customer_name = models.CharField(max_length = 100, blank = True)
     def __str__(self):
         return str(self.customer_name)
-    def get_all_plots(self):
+
+    def get_all_parent_plots(self):
         user = self.user
         if user.is_staff:
-            all_plots = Plot.objects.all().reverse().order_by('-name')
+            all_parent_plots = Parent_Plot.objects.all().reverse().order_by('-name')
         else:
-            all_plots = Plot.objects.filter(customer_id=self.pk).order_by('-startdate')
-        return all_plots
+            all_parent_plots = Parent_Plot.objects.filter(customer_id=self.pk)
+        return all_parent_plots
+
+class Parent_Plot(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.customer) + ' - ' + self.name + ' parent'
+
+    def get_plot(self):
+        my_plot = Plot.objects.filter(parent_plot_id=self.pk).first()
+        return my_plot
 
 class Plot(models.Model):
-    name = models.CharField(max_length=100)
-    street = models.CharField(max_length=100)
-    number = models.IntegerField()
-    shape = models.PolygonField(null=True, blank=True, geography=True)
+    parent_plot = models.ForeignKey(Parent_Plot, on_delete=models.SET_NULL, null=True)
+    plot_shape = models.PolygonField(null=True, blank=True, geography=True)
+    starting_point = models.PointField(null=True, blank=True, geography=True)
 
     crop_choices = (
-    ('AKKER', 'Akkerbouw'),
-    ('BOL', 'Bollenteelt'),
-    ('GROENTE', 'Groenteteelt')
+    ('BROCCOLI', 'Broccoli'),
+    ('BLOEMKOOL', 'Bloemkool'),
+    ('TULP', 'Tulpen'),
+    ('LELY', 'Lelies'),
+    ('CICHOREI', 'Cichorei'),
+    ('AARDAPPEL', 'Aardappelen'),
+    ('SPRUIT', 'Spruiten'),
+    ('SLA', 'Sla')
     )
-    crop = models.CharField(
+    crop_type = models.CharField(
         max_length=100,
         choices=crop_choices,
         default='None'
     )
+
+    active = models.BooleanField(default=True)
+
     startdate= models.DateField(default=date.today())
-    customer = models.ForeignKey(Customer,blank = True, on_delete=models.CASCADE)
+
 
     def __str__(self):
-        myname = str(self.customer) + ' - ' + self.name
+        myname = str(self.parent_plot.customer.customer_name) + ' - ' + self.parent_plot.name
         return myname
 
     def get_absolute_url(self):
@@ -44,8 +63,14 @@ class Plot(models.Model):
 
     @property
     def area(self):
-        area = (1/10000) * self.shape.transform(28992,clone=True).area
+        area = (1/10000) * self.plot_shape.transform(28992,clone=True).area
         return area
+
+    def save(self, *args, **kwargs):
+        if not self.starting_point:
+            self.starting_point = self.plot_shape.centroid
+        super().save(*args, **kwargs)
+
 
 class Scan(models.Model):
     plot = models.ForeignKey(Plot, on_delete=models.CASCADE)
