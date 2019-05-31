@@ -22,7 +22,7 @@ def map(request, map_id):
     scans = Scan.objects.filter(plot=this_plot).order_by('date')
 
     # #Generating langlong list of polygon shape
-    coords = this_plot.plot_shape.coords[0] #Get coordinate tuple
+    coords = this_plot.shape.coords[0] #Get coordinate tuple
     rev_coords = [(y, x) for x, y in coords] #Reverse lat/long
     plot_polygon_latlong = str(list(rev_coords)).replace('(','[').replace(')',']') #Create JavaScript latlong line
 

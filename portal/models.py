@@ -30,7 +30,7 @@ class Parent_Plot(models.Model):
 
 class Plot(models.Model):
     parent_plot = models.ForeignKey(Parent_Plot, on_delete=models.SET_NULL, null=True)
-    plot_shape = models.PolygonField(null=True, blank=True, geography=True)
+    shape = models.PolygonField(null=True, blank=True, geography=True)
     starting_point = models.PointField(null=True, blank=True, geography=True)
 
     crop_choices = (
@@ -43,7 +43,7 @@ class Plot(models.Model):
     ('SPRUIT', 'Spruiten'),
     ('SLA', 'Sla')
     )
-    crop_type = models.CharField(
+    crop = models.CharField(
         max_length=100,
         choices=crop_choices,
         default='None'
@@ -63,12 +63,12 @@ class Plot(models.Model):
 
     @property
     def area(self):
-        area = (1/10000) * self.plot_shape.transform(28992,clone=True).area
+        area = (1/10000) * self.shape.transform(28992,clone=True).area
         return area
 
     def save(self, *args, **kwargs):
         if not self.starting_point:
-            self.starting_point = self.plot_shape.centroid
+            self.starting_point = self.shape.centroid
         super().save(*args, **kwargs)
 
 
@@ -82,7 +82,9 @@ class Scan(models.Model):
     def __str__(self):
         return (self.date.strftime('%Y-%m-%d') + ' ' + self.time.strftime('%H:%M') + ' - ' + str(self.plot))
 
+
 class Logbook(models.Model):
+    #Class used to log visits to the website. Can be viewed in dev.vanboven-drones.nl/phppgmyadmin
     time = models.DateTimeField(auto_now_add=True, null=True,blank=True)
     action = models.CharField(max_length=64)
     ip = models.GenericIPAddressField(null=True)
@@ -93,3 +95,50 @@ class Logbook(models.Model):
 
     def __str__(self):
         return '{0} - {1} - {2}'.format(self.action, self.username, self.ip)
+
+#Next up: DB entries made to keep track of measurements
+class Breed(models.Model):
+    name = models.CharField(max_length=100, null=True)
+    crop_choices = (
+    ('BROCCOLI', 'Broccoli'),
+    ('BLOEMKOOL', 'Bloemkool'),
+    ('TULP', 'Tulpen'),
+    ('LELY', 'Lelies'),
+    ('CICHOREI', 'Cichorei'),
+    ('AARDAPPEL', 'Aardappelen'),
+    ('SPRUIT', 'Spruiten'),
+    ('SLA', 'Sla')
+    )
+    crop = models.CharField(
+        max_length=25,
+        choices=crop_choices,
+        null=True
+    )
+    season_choices = (
+    ('SPRING','Voorjaar'),
+    ('SUMMER','Zomer'),
+    ('FALL','Herfst'),
+    ('WINTER','Winter'),
+    )
+    season = models.CharField(max_length = 25, choices=season_choices,null=True)
+
+class Planting(models.Model):
+    plot = models.ForeignKey(Plot, on_delete=models.SET_NULL, null=True)
+    breed = models.ForeignKey(Breed, on_delete=models.SET_NULL, null=True)
+    shape = models.PolygonField(null=True, geography=True)
+    no_of_plants = models.PositiveIntegerField(null=True)
+    plant_date = models.DateField(null=True)
+    harvest_date_projected = models.DateField(null=True)
+    harvest_date_actual = models.DateField(null=True)
+    harvest_date_modelled = models.DateField(null=True)
+
+class Plant(models.Model):
+    planting = models.ForeignKey(Planting, on_delete=models.SET_NULL, null=True)
+    location = models.PointField(null=True, geography=True)
+
+class Measurement(models.Model):
+    plant = models.ForeignKey(Plant, on_delete=models.SET_NULL, null=True)
+    scan = models.ForeignKey(Scan,on_delete=models.SET_NULL, null=True)
+    diameter = models.FloatField(null=True)
+    height = models.FloatField(null=True)
+    shape = models.PolygonField(null=True, geography=True)
