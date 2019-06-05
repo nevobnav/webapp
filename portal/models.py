@@ -20,12 +20,12 @@ class Customer(models.Model):
 class Parent_Plot(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100)
-    
+
     def __str__(self):
         return str(self.customer) + ' - ' + self.name + ' parent'
 
     def get_plot(self):
-        my_plot = Plot.objects.filter(parent_plot_id=self.pk).first()
+        my_plot = Plot.objects.filter(parent_plot_id=self.pk).filter(active=True).first()
         return my_plot
 
 class Plot(models.Model):

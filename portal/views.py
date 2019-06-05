@@ -42,11 +42,11 @@ def map(request, map_id):
 @login_required(login_url='/login/')
 def user_profile(request):
     user = request.user
-    plots = user.customer.get_all_plots()
+    parent_plots = user.customer.get_all_parent_plots()
     acreage = 0
-    for plot in plots:
+    for parent_plot in parent_plots:
+        plot = parent_plot.get_plot()
         acreage += plot.area
-
     context = {
     'acreage': acreage,
     }

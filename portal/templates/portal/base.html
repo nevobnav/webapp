@@ -90,7 +90,7 @@
                     <span data-feather="square"></span> <!-- This is the icon -->
                   {% endif %}
                   {{ parent_plot.name }}
-                  <span class="text-secondary"> ({{ parent_plot.plot_set.all.first.area | floatformat}} ha.)</span>
+                  <span class="text-secondary"> ({{  parent_plot.get_plot.area | floatformat}} ha.)</span>
                 </a>
               </li>
               {% endfor %}
