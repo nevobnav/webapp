@@ -76,8 +76,27 @@ class Scan(models.Model):
     plot = models.ForeignKey(Plot, on_delete=models.CASCADE)
     date = models.DateField(default=date.today())
     time = models.TimeField(default= time(2,0))
+    no_imgs = models.PositiveIntegerField(null=True)
     zoomlevel = models.PositiveSmallIntegerField(default = 23)
     flight_altitude = models.PositiveSmallIntegerField(default = 35)
+    sensor = models.CharField(default = 'unknown', max_length = 100)
+    quality_choices = (
+    ('LOW', 'Low'),
+    ('MED', 'Medium'),
+    ('HIGH', 'High'),
+    )
+    quality = models.CharField(
+        max_length=10,
+        choices=quality_choices,
+        default = 'MED'
+    )
+    upload = models.DateTimeField(null=True)
+    preprocess = models.DateTimeField(null=True)
+    ortho = models.DateTimeField(null=True)
+    tiles = models.DateTimeField(null=True)
+    live = models.BooleanField(default=True)
+
+
 
     def __str__(self):
         return (self.date.strftime('%Y-%m-%d') + ' ' + self.time.strftime('%H:%M') + ' - ' + str(self.plot))

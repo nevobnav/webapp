@@ -121,46 +121,47 @@
     // LAYERS
     var scan_list = []
     {% for scan in scans %}
-      var scan_date = {{ scan.date|date:"Ymd" }}
-      var scan_time = '{{ scan.time|date:"Hi" }}'
-      var scan_path = basic_data_path + customer_name + "/" + plotname + "/" + scan_date + scan_time + "/{z}/{x}/{y}.png"
-      var scan_max_zoom = {{ scan.zoomlevel }} + 1;   //Increase zoom level by 1 to include a pixel-zoom
-      var scan_max_native_zoom = {{ scan.zoomlevel }};
-      var scan_flight_altitude = {{ scan.flight_altitude }};
-      var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
-        minZoom: 15,
-        maxZoom: scan_max_zoom,
-        maxNativeZoom: scan_max_native_zoom,
-        tms: true,
-        time: "{{scan.date }}",
+      {% if scan.live %}
+        var scan_date = {{ scan.date|date:"Ymd" }}
+        var scan_time = '{{ scan.time|date:"Hi" }}'
+        var scan_path = basic_data_path + customer_name + "/" + plotname + "/" + scan_date + scan_time + "/{z}/{x}/{y}.png"
+        var scan_max_zoom = {{ scan.zoomlevel }} + 1;   //Increase zoom level by 1 to include a pixel-zoom
+        var scan_max_native_zoom = {{ scan.zoomlevel }};
+        var scan_flight_altitude = {{ scan.flight_altitude }};
+        var customer_scan_{{ scan.date|date:"Ymd" }} =  L.tileLayer(scan_path, {
+          minZoom: 15,
+          maxZoom: scan_max_zoom,
+          maxNativeZoom: scan_max_native_zoom,
+          tms: true,
+          time: "{{scan.date }}",
 
-        // pass along extra info from database
-        infobox_context: [scan_flight_altitude] // extra properties can be added in this array
-      });
+          // pass along extra info from database
+          infobox_context: [scan_flight_altitude] // extra properties can be added in this array
+        });
 
-      // Setting language to Dutch to format date
-      {% language 'nl' %}
+        // Setting language to Dutch to format date
+        {% language 'nl' %}
 
-      // Create new layer and give title. Remove time if its 02:00 (which means no
-      // time is available)
+        // Create new layer and give title. Remove time if its 02:00 (which means no
+        // time is available)
 
-        {% if scan.time|date:"Hi" == '0200' %}
-          var new_entry = {"{{ scan.date|date:"j E" }}":
-                            customer_scan_{{ scan.date|date:"Ymd" }}};
-        {% else %}
-          var new_entry = {"{{ scan.date|date:"j E" }} - {{ scan.time|date:"H:i" }}":
-                            customer_scan_{{ scan.date|date:"Ymd" }}};
+          {% if scan.time|date:"Hi" == '0200' %}
+            var new_entry = {"{{ scan.date|date:"j E" }}":
+                              customer_scan_{{ scan.date|date:"Ymd" }}};
+          {% else %}
+            var new_entry = {"{{ scan.date|date:"j E" }} - {{ scan.time|date:"H:i" }}":
+                              customer_scan_{{ scan.date|date:"Ymd" }}};
+          {% endif %}
+
+        {% endlanguage %}
+
+        // Add this layer to the list of scan layers
+        var scan_list = $.extend(scan_list, new_entry);
+
+        {% if forloop.last %}
+          customer_scan_{{ scan.date|date:"Ymd" }}.addTo(map);
         {% endif %}
-
-      {% endlanguage %}
-
-      // Add this layer to the list of scan layers
-      var scan_list = $.extend(scan_list, new_entry);
-
-      {% if forloop.last %}
-        customer_scan_{{ scan.date|date:"Ymd" }}.addTo(map);
       {% endif %}
-
     {% endfor %}
 
     //Import shape from DB
