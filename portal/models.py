@@ -38,10 +38,13 @@ class Plot(models.Model):
     ('BLOEMKOOL', 'Bloemkool'),
     ('TULP', 'Tulpen'),
     ('LELY', 'Lelies'),
+    ('HYACINTH', 'Hyacinth'),
     ('CICHOREI', 'Cichorei'),
     ('AARDAPPEL', 'Aardappelen'),
     ('SPRUIT', 'Spruiten'),
-    ('SLA', 'Sla')
+    ('SLA', 'Sla'),
+    ('PEEN', 'Peen'),
+    ('UI', 'Ui'),
     )
     crop = models.CharField(
         max_length=100,
