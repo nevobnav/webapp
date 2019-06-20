@@ -162,12 +162,14 @@
 
         // Add this layer to the list of scan layers
         var scan_list = $.extend(scan_list, new_entry);
+        var last_valid_scan = customer_scan_{{ scan.date|date:"Ymd" }}
 
-        {% if forloop.last %}
-          customer_scan_{{ scan.date|date:"Ymd" }}.addTo(map);
-        {% endif %}
       {% endif %}
     {% endfor %}
+    last_valid_scan.addTo(map);
+
+
+
     scan_info = [scan_flight_altitude, scan_id];
 
     //Import shape from DB

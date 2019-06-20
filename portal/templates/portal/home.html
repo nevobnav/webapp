@@ -11,6 +11,7 @@
         {% if user.customer.get_all_unseen_parent_plots|length > 0 %}
             unseen_plots = true
         {% endif %}
+
         if (unseen_plots){
           document.getElementById("new_scan_info_id").innerHTML = "Sinds je laatste bezoek zijn er nieuwe beelden geupload. Bekijk ze via het menu links.";
         } else {
