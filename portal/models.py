@@ -17,6 +17,22 @@ class Customer(models.Model):
             all_parent_plots = Parent_Plot.objects.filter(customer_id=self.pk)
         return all_parent_plots
 
+    def get_all_plots(self):
+        parent_plots = self.get_all_parent_plots()
+        plots = [x.plot_set.filter(active=True).first() for x in parent_plots]
+        return plots
+
+    def get_all_unseen_parent_plots(self):
+        plots = self.get_all_plots()
+        plot_ids = [x.id for x in plots]
+        relevant_scans = Scan.objects.filter(plot_id__in=plot_ids).filter(seen_by_user=False)
+        unseen_parent_plots = []
+        for scan in relevant_scans:
+            unseen_parent_plots.append(scan.plot.parent_plot.id)
+        return unseen_parent_plots
+
+
+
 class Parent_Plot(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100)
@@ -27,6 +43,9 @@ class Parent_Plot(models.Model):
     def get_plot(self):
         my_plot = Plot.objects.filter(parent_plot_id=self.pk).filter(active=True).first()
         return my_plot
+
+
+
 
 class Plot(models.Model):
     parent_plot = models.ForeignKey(Parent_Plot, on_delete=models.SET_NULL, null=True)
@@ -53,8 +72,8 @@ class Plot(models.Model):
     )
 
     active = models.BooleanField(default=True)
-
     startdate= models.DateField(default=date.today())
+
 
 
     def __str__(self):
@@ -73,6 +92,7 @@ class Plot(models.Model):
         if not self.starting_point:
             self.starting_point = self.shape.centroid
         super().save(*args, **kwargs)
+
 
 
 class Scan(models.Model):
@@ -98,11 +118,19 @@ class Scan(models.Model):
     ortho = models.DateTimeField(null=True)
     tiles = models.DateTimeField(null=True)
     live = models.BooleanField(default=True)
-
+    seen_by_user = models.BooleanField(default=False)
 
 
     def __str__(self):
         return (self.date.strftime('%Y-%m-%d') + ' ' + self.time.strftime('%H:%M') + ' - ' + str(self.plot))
+
+class MapNote(models.Model):
+    time = models.DateTimeField(auto_now_add=True)
+    name = models.CharField(default = 'unkown', max_length = 100)
+    note = models.TextField(null=True)
+    lat = models.FloatField(null=True)
+    lon = models.FloatField(null=True)
+    scan = models.ForeignKey(Scan, on_delete=models.CASCADE)
 
 
 class Logbook(models.Model):

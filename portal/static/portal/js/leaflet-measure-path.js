@@ -51,16 +51,16 @@
             if (d > 1000) {
                 d = d / 1000;
                 unit = 'km';
+            } else if (d<1){
+              d = d*100;
+              unit = 'cm';
             } else {
                 unit = 'm';
             }
         }
 
-        if (d < 100) {
-            return d.toFixed(1) + ' ' + unit;
-        } else {
-            return Math.round(d) + ' ' + unit;
-        }
+        return Math.round(d) + ' ' + unit;
+
     }
 
     var formatArea = function(a) {

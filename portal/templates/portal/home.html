@@ -4,7 +4,23 @@
     <h2>Dashboard</h2>
     {% if user.is_authenticated %}
       <p>Welkom {{ user.first_name }}!</p>
-    {% else %}
+      <div class="info-text" id="new_scan_info_id"></div>
+
+      <script type="text/javascript">
+        let unseen_plots = false
+        {% if user.customer.get_all_unseen_parent_plots|length > 0 %}
+            unseen_plots = true
+        {% endif %}
+        if (unseen_plots){
+          document.getElementById("new_scan_info_id").innerHTML = "Sinds je laatste bezoek zijn er nieuwe beelden geupload. Bekijk ze via het menu links.";
+        } else {
+          document.getElementById("new_scan_info_id").innerHTML = "Je bent helemaal up to date - er zijn geen nieuwe beelden beschikbaar.";
+        }
+
+      </script>
+
+
+      {% else %}
 
       <p>Welkom! Je kunt <a href="{% url 'portal-login' %}">hier inloggen</a>.
 

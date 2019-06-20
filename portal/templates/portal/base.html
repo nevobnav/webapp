@@ -80,16 +80,16 @@
                 <span>Percelen</span>
               </h6>
               <ul class="nav flex-column mb-2">
-              {% for parent_plot in user.customer.get_all_parent_plots %}
 
+              {% for parent_plot in user.customer.get_all_parent_plots %}
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'portal-map' parent_plot.id %}">
+                  <a class="nav-link" href="{% url 'portal-map' parent_plot.id %}">
                   {% if this_plot.parent_plot_id == parent_plot.pk %}
                     <span data-feather="check-square"></span> <!-- This is the icon -->
                   {% else %}
                     <span data-feather="square"></span> <!-- This is the icon -->
                   {% endif %}
-                  {{ parent_plot.name }}
+                  {{ parent_plot.name }} <span id="new_badge{{ parent_plot.id }}" class="badge badge-warning"></span>
                   <span class="text-secondary"> ({{  parent_plot.get_plot.area | floatformat}} ha.)</span>
                 </a>
               </li>
@@ -116,21 +116,30 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script>
       document.querySelector('#toggle-button').addEventListener('click', function() {
       document.querySelector('.sidebar-sticky').classList.toggle('collapsed');
       });
     </script>
+
+
+
+
     <!-- Icons -->
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
     <script>
       feather.replace()
     </script>
 
+    <script type="text/javascript">
+      {% for unseen_plot in user.customer.get_all_unseen_parent_plots %}
+        document.getElementById("new_badge{{unseen_plot}}").innerHTML = "New"
+      {% endfor %}
+    </script>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
   </body>

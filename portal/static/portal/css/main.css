@@ -13,8 +13,14 @@ h1, h2, h3, h4, h5, h6 {
   color: #444444;
 }
 
+
 ul {
   margin: 0;
+}
+
+.info-text {
+font-size: 0.75rem;
+color: #555;
 }
 
 .bg-steel {
