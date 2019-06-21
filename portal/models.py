@@ -25,7 +25,7 @@ class Customer(models.Model):
     def get_all_unseen_parent_plots(self):
         plots = self.get_all_plots()
         plot_ids = [x.id for x in plots]
-        relevant_scans = Scan.objects.filter(plot_id__in=plot_ids).filter(seen_by_user=False)
+        relevant_scans = Scan.objects.filter(plot_id__in=plot_ids).filter(seen_by_user=False).filter(live=True)
         unseen_parent_plots = []
         for scan in relevant_scans:
             unseen_parent_plots.append(scan.plot.parent_plot.id)
