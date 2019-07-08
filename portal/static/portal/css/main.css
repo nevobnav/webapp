@@ -23,6 +23,7 @@ font-size: 0.75rem;
 color: #555;
 }
 
+
 .bg-steel {
   background-color: #5f788a;
 }
@@ -96,4 +97,40 @@ a.article-title:hover {
 
 .account-heading {
   font-size: 2.5rem;
+}
+
+
+.legend {
+    line-height: 18px;
+    color: #222222;
+}
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.85;
+}
+
+.legend-header {
+  font-weight: bold;
+  font-size: .75rem;
+  font-family: 'Roboto Condensed', sans-serif;
+  text-transform: uppercase;
+  margin-bottom: -.2em;
+  margin-left: 3px;
+  color: #222222;
+}
+.legend-unit {
+  font-size: .75rem;
+  font-family: 'Roboto Condensed', sans-serif;
+  margin-bottom: .7em;
+  margin-left: 3px;
+  color: #222222;
+}
+.legend-tickers {
+  font-size: .75rem;
+  margin-bottom: .2em;
+  margin-left: 3px;
+  color: #333333;
 }

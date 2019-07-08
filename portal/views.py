@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.utils.html import strip_tags
 from django.utils.text import normalize_newlines
 
-from .models import Plot,Scan,Customer, Parent_Plot, MapNote
+from .models import Plot,Scan,Customer, Parent_Plot, MapNote, Datalayer
 from .forms import MapNoteForm
 from geoalchemy2.shape import to_shape
 import shapely
@@ -39,18 +39,22 @@ def add_note(request):
         lon = lon,
         scan_id = scan_id
     )
-
     return render(request, 'portal/about.html')
 
 
 @login_required(login_url='/login/')
 def map(request, map_id):
     user = request.user
-    # this_plot =  Plot.objects.get(id=map_id)
+
+    # Get the right plot
     this_parent_plot = Parent_Plot.objects.get(id=map_id)
     this_plot = this_parent_plot.get_plot()
+
+    #Fetch the corresponding scans
     scans = Scan.objects.filter(plot=this_plot).order_by('date')
     scan_ids = []
+
+    #Determine if any scans are new, if so mark as seen
     new_scans = []
     for scan in scans:
         scan_ids.append(scan.pk)
@@ -62,15 +66,8 @@ def map(request, map_id):
             new_scan.seen_by_user = True
             new_scan.save()
 
-    print(scan_ids)
-
+    #All required for MapNotes:
     mapnotes = MapNote.objects.filter(scan_id__in=scan_ids)
-    print(mapnotes)
-
-    # #Generating langlong list of polygon shape
-    coords = this_plot.shape.coords[0] #Get coordinate tuple
-    rev_coords = [(y, x) for x, y in coords] #Reverse lat/long
-    plot_polygon_latlong = str(list(rev_coords)).replace('(','[').replace(')',']') #Create JavaScript latlong line
 
     #Adding form to add map notes
     if request.method == 'POST':
@@ -79,6 +76,23 @@ def map(request, map_id):
             form.save()
     else:
         form = MapNoteForm()
+
+
+    # Fetch shape boundaries for red line on map
+    coords = this_plot.shape.coords[0] #Get coordinate tuple
+    rev_coords = [(y, x) for x, y in coords] #Reverse lat/long
+    plot_polygon_latlong = str(list(rev_coords)).replace('(','[').replace(')',']') #Create JavaScript latlong line
+
+
+    #Get all data_layers corresponding to this map
+    data_layers = Datalayer.objects.filter(scan_id__in=scan_ids)
+    data_layer_list = []
+    for dl in data_layers:
+        data_values = [x['properties'][dl.property_name] for x in dl.data['features']]
+        max_val = max(data_values)
+        dl_dict = {'scan_id': dl.scan_id, 'property_name': dl.property_name,'list_name':dl.list_name,  'data': dl.data,
+             'max_val': max_val, 'legend_title':dl.legend_title, 'legend_unit':dl.legend_unit}
+        data_layer_list.append(dl_dict)
 
 
     if user.customer.pk == this_parent_plot.customer_id or user.is_staff:
@@ -90,7 +104,7 @@ def map(request, map_id):
         'scans' : scans,
         'mapnotes': mapnotes,
         'form' : form,
-
+        'data_layers': data_layer_list,
         }
         return render(request, 'portal/map.html', context=context)
     else:

@@ -6,6 +6,8 @@
 {% block header %}
 
 
+
+
   <!-- Loading a lot of crap -->
   <!-- responsive tag -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -52,7 +54,12 @@
   <!-- fontawesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
-
+  <!-- This little loop adds available datalayers in json format to this page. Would be nice
+  if can give this a unique id, instead of the property_name. ID is used later when getting
+  the element by ID -->
+  {% for data_layer in data_layers %}
+    {{ data_layer.data|json_script:data_layer.property_name}}
+  {% endfor %}
 
 
   <!-- creating script sources based on user ID-->
@@ -69,6 +76,7 @@
 
   <div id='map' class="map"></div>
 
+
   <script>
 
     var lat = {{ this_plot.shape.centroid.y }}
@@ -76,6 +84,7 @@
     var center_coords = [lat, lon]
     var init_zoom = 17
     var max_zoom = 24
+    var datalayerGroup = L.layerGroup();
 
     // initalize slider control
     var sliderControl = null;
@@ -242,7 +251,10 @@
     };
 
     // LAYER CONTROL
-    L.control.groupedLayers(baseMaps, overlayMaps,{collapsed:false, exclusiveGroups:['Dronebeelden']}).addTo(map);
+
+    layerControl = L.control.groupedLayers(baseMaps, overlayMaps,{collapsed:false, exclusiveGroups:['Dronebeelden']}).addTo(map);
+
+    // Creating button to reset view to original
     L.easyButton('fa-vector-square',function(btn,map){
       map.setView([lat, lon], init_zoom);
     },'Terug naar perceel').addTo(map);
@@ -270,7 +282,7 @@
         //map.on('click', function(e) {
 
           // var MapNote = L.popup();
-          var marker = L.marker([lat, lon],{draggable:'true'}).addTo(map);
+          var marker = L.marker(map.getCenter(),{draggable:'true'}).addTo(map);
 
           {% spaceless %}
             //var content = `<form id=${form_id} method="post"> {% csrf_token %}  {{form.as_p}} <br><button class="submit_btn" type="submit"> Save</button>`
@@ -279,10 +291,6 @@
           {% endspaceless %}
 
           marker.bindPopup(content);
-
-          // MapNote.setContent(content);
-          // MapNote.setLatLng(e.latlng); //calculated based on the e.layertype
-          // MapNote.openOn(map);
 
           $('body').on('submit', '#note_form', function(A) {
             A.preventDefault()
@@ -297,7 +305,6 @@
                   },
               dataType: 'json',
             })
-            console.log( 'endofquery' );
             marker.closePopup()
             // MapNote.remove();
           })
@@ -310,9 +317,6 @@
       var markerGroup = L.layerGroup().addTo(map);
       function drawMarkers(input_data){
         markerGroup.clearLayers()
-        console.log('Scan info equals')
-        console.log(input_data[1])
-
         {% for note in mapnotes %}
           var name_note = '{{note.name}}'
           var note = '{{note.note|striptags}}'
@@ -354,17 +358,132 @@
 
     info.addTo(map);
     info.update([scan_flight_altitude, scan_id]);  // on map creation, infobox content is pulled manually. LELIJK - fixen als er meer info in infobox_context komt!
-    drawMarkers([scan_flight_altitude, scan_id])
+    drawMarkers([scan_flight_altitude, scan_id]);
+    //Initiate data layer group
+    let max_data_val = 0
+    let new_layer_id = 0
+    showDataLayer([scan_flight_altitude, scan_id]);
     // when a different layer is selected, the function 'onOverlayAdd' is fired
     map.on('overlayadd', onOverlayAdd);
+    map.on('overlayremove', onOverlayRemove)
 
-    // function to push infobox_content to infobox
+    // Function to push infobox_content to infobox
     function onOverlayAdd(currentlayer){
-      info.update(currentlayer.layer.options.infobox_context);
-      drawMarkers(currentlayer.layer.options.infobox_context);
-
+      // Check if we are dealing with scan-layers. If so, update infobox, draw markers, and show dataLayers
+      if (currentlayer.layer.options.infobox_context){
+        info.update(currentlayer.layer.options.infobox_context);
+        drawMarkers(currentlayer.layer.options.infobox_context);
+        resetDataLayerControls();
+        showDataLayer(currentlayer.layer.options.infobox_context);
+      // Check if its a datalayer. In that case, make sure there's a legend.
+      } else if (Object.keys(currentlayer.layer).includes("options")){
+        if (currentlayer.layer.options.layertype == 'datalayer'){
+          if (map.hasLayer(legend)){
+            legend.update(currentlayer.layer.options);
+          } else {
+            legend.addTo(map)
+            legend.update(currentlayer.layer.options);
+          }
+        };
+      };
     }
 
+    function onOverlayRemove(removedLayer){
+      // Remove legend if dataoverlay is removed
+      if (Object.keys(removedLayer.layer).includes("options")){
+        if (removedLayer.layer.options.layertype == 'datalayer'){
+          map.removeControl(legend)
+        };
+      };
+    };
+
+    function resetDataLayerControls(){
+      var layers = layerControl._layers
+      layers = layers.filter(function(){return true;});
+      for (let i=0; i<layers.length; i++){
+        if (Object.keys(layers[i].layer).includes("options")){
+          if (layers[i].layer.options.layertype == "datalayer"){
+            layerControl.removeLayer(layers[i].layer);
+            onOverlayRemove(layers[i]);
+            map.removeLayer(layers[i].layer);
+          };
+        };
+      };
+    };
+
+    function showDataLayer(infobox_context){
+      {% for dl in data_layers %}
+        var data_scan_id = {{dl.scan_id}}
+        if (data_scan_id == infobox_context[1]){
+          var data = JSON.parse(document.getElementById('{{ dl.property_name }}').textContent);
+          new_layer = L.geoJson(data, {style: function set_data_style(feature) {
+            var choro_color = get_choro_color(feature.properties.{{dl.property_name}}, {{dl.max_val}})
+            return{
+              fillColor:choro_color,
+              color:'green',
+              weight: 0.5,
+              opacity: 1,
+              fillOpacity: 0.9
+            }
+          }
+          , coordsToLatLng: latlong, layertype: 'datalayer',
+            legend_title: '{{dl.legend_title}}', legend_unit: '{{dl.legend_unit}}', max_data_val: {{dl.max_val}} });
+          new_layer_id = new_layer._leaflet_id
+          // new_layer.addTo(datalayerGroup)
+          layerControl.addOverlay(new_layer, "{{ dl.layer_name }}", "Extra's") //This line also triggers reset of the radio button
+        };
+      {% endfor %}
+
+    };
+
+    // WIDGET SHOWING LEGEND
+    var legend = L.control({position: 'bottomright'});
+
+
+    legend.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'legend info'); // create a div with a class "legend"
+        return this._div;
+    };
+
+    // function used to update 'legend' content based on current layer clicked
+    legend.update = function (options) {
+      var grades = new Array(10);
+      this._div.innerHTML = '<p class="legend-header"><span id="legend-header"></span></p>'+
+      '<p class="legend-unit">[<span id="legend-unit"></span>]</p>'
+      for (i = 0; i < grades.length; i++) {
+        grades[i] = (i/grades.length*options.max_data_val)
+      };
+      for (i=0; i < grades.length; i++){
+        this._div.innerHTML +=
+        '<i style="background:' + get_choro_color(grades[i], options.max_data_val) + '"></i> ' +
+             '<p class="legend-tickers">' + grades[i].toPrecision(2) +
+             (grades[i + 1] ? '&ndash;' + grades[i + 1].toPrecision(2) +'<br>' : '+' + '</p>');
+      }
+      $('#legend-header').text(options.legend_title);
+      $('#legend-unit').text(options.legend_unit);
+
+    };
+
+
+    function latlong(coordinates) {
+      var max_coordinate = Math.max(...coordinates)
+      var min_coordinate = Math.min(...coordinates)
+      return {lat: max_coordinate, lng: min_coordinate};
+    }
+
+    function get_choro_color(val, max_data_val){
+      var colorlist = ['#FFBF00','#E6B700','#CCAF00','#B3C600','#999F00','#809800','#669000','#4D8800','#338000','#1A7800','#007000'];
+      return val > (0.9*max_data_val)  ? colorlist[10] :
+          val > (0.8*max_data_val) ? colorlist[9] :
+          val > (0.7*max_data_val)  ? colorlist[8]  :
+          val > (0.6*max_data_val)  ? colorlist[7]  :
+          val > (0.5*max_data_val)  ? colorlist[6]  :
+          val > (0.4*max_data_val)  ? colorlist[5]  :
+          val > (0.3*max_data_val)  ? colorlist[4]  :
+          val > (0.2*max_data_val)  ? colorlist[3]  :
+          val > (0.1*max_data_val)  ? colorlist[2]  :
+          colorlist[1] ;
+    }
 
   </script>
 

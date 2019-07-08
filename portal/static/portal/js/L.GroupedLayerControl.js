@@ -158,38 +158,38 @@ L.Control.GroupedLayers = L.Control.extend({
     }
   },
 
-  _update: function () {
+  _update: function() {
     if (!this._container) {
       return;
     }
-
     this._baseLayersList.innerHTML = '';
     this._overlaysList.innerHTML = '';
     this._domGroups.length = 0;
-
     var baseLayersPresent = false,
       overlaysPresent = false,
       i, obj;
-
-    for (var i = 0; i < this._layers.length; i++) {
+    var lay_length = this._layers.length
+    for (var i = 0; i < lay_length; i++) {
       obj = this._layers[i];
-      this._addItem(obj);
+      if(obj != undefined){ // Kaz added this to make sure removeLayer works OK.
+        this._addItem(obj);
+        }
       overlaysPresent = overlaysPresent || obj.overlay;
       baseLayersPresent = baseLayersPresent || !obj.overlay;
     }
-
     this._separator.style.display = overlaysPresent && baseLayersPresent ? '' : 'none';
+
   },
 
   _onLayerChange: function (e) {
     var obj = this._getLayer(L.Util.stamp(e.layer)),
       type;
-
     if (!obj) {
       return;
     }
 
     if (!this._handlingClick) {
+
       this._update();
     }
 
@@ -219,12 +219,12 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   _addItem: function (obj) {
+
     var label = document.createElement('label'),
       input,
       checked = this._map.hasLayer(obj.layer),
       container,
       groupRadioName;
-
     if (obj.overlay) {
       if (obj.group.exclusive) {
         groupRadioName = 'leaflet-exclusive-group-layer-' + obj.group.id;
@@ -242,7 +242,6 @@ L.Control.GroupedLayers = L.Control.extend({
     input.layerId = L.Util.stamp(obj.layer);
     input.groupID = obj.group.id;
     L.DomEvent.on(input, 'click', this._onInputClick, this);
-
     var name = document.createElement('span');
     name.innerHTML = ' ' + obj.name;
 
@@ -253,7 +252,6 @@ L.Control.GroupedLayers = L.Control.extend({
       container = this._overlaysList;
 
       var groupContainer = this._domGroups[obj.group.id];
-
       // Create the group container if it doesn't exist
       if (!groupContainer) {
         groupContainer = document.createElement('div');
@@ -285,6 +283,7 @@ L.Control.GroupedLayers = L.Control.extend({
         container.appendChild(groupContainer);
 
         this._domGroups[obj.group.id] = groupContainer;
+
       }
 
       container = groupContainer;
@@ -323,21 +322,34 @@ L.Control.GroupedLayers = L.Control.extend({
   },
 
   _onInputClick: function () {
-    var i, input, obj,
+    var input, obj,
       inputs = this._form.getElementsByTagName('input'),
       inputsLen = inputs.length;
 
     this._handlingClick = true;
 
-    for (i = 0; i < inputsLen; i++) {
+    for (let i = 0; i < inputsLen; i++) {
+      input = inputs[i];
+      if (input.className === 'leaflet-control-layers-selector') {
+        obj = this._getLayer(input.layerId);
+
+        if (!input.checked && this._map.hasLayer(obj.layer)) {
+          this._map.removeLayer(obj.layer);
+        }
+      }
+    }
+    for (let i = 0; i < inputsLen; i++) {
       input = inputs[i];
       if (input.className === 'leaflet-control-layers-selector') {
         obj = this._getLayer(input.layerId);
 
         if (input.checked && !this._map.hasLayer(obj.layer)) {
+          // by adding a new map, the onOverlayAdd functions are triggerd. These
+          // affect 'inputs', which should therefore be re-inspected. Especially
+          // its length might change, as we remove layers from the controller.
           this._map.addLayer(obj.layer);
-        } else if (!input.checked && this._map.hasLayer(obj.layer)) {
-          this._map.removeLayer(obj.layer);
+          inputs = this._form.getElementsByTagName('input');
+          inputsLen = inputs.length;
         }
       }
     }

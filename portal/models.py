@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
 from datetime import date,time
 
 class Customer(models.Model):
@@ -92,6 +93,7 @@ class Plot(models.Model):
         if not self.starting_point:
             self.starting_point = self.shape.centroid
         super().save(*args, **kwargs)
+
 
 
 
@@ -192,3 +194,12 @@ class Measurement(models.Model):
     diameter = models.FloatField(null=True)
     height = models.FloatField(null=True)
     shape = models.PolygonField(null=True, geography=True)
+
+class Datalayer(models.Model):
+    time = models.DateTimeField(null=True)
+    data = JSONField(null=True)
+    property_name = models.CharField(max_length = 256,null=True)
+    layer_name = models.CharField(max_length = 256, null=True)
+    legend_title = models.CharField(max_length = 256, null=True)
+    legend_unit = models.CharField(max_length = 256, null=True)
+    scan = models.ForeignKey(Scan, on_delete=models.SET_NULL, null=True)

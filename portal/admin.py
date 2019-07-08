@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Plot, Scan, Customer, Logbook, Parent_Plot, Measurement, Breed, Planting, Plant
+from .models import Plot, Scan, Customer, Logbook, Parent_Plot, Measurement, Breed, Planting, Plant, Datalayer
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin
 
@@ -40,6 +40,7 @@ admin.site.register(Planting)
 admin.site.register(Plant)
 admin.site.register(Measurement)
 admin.site.register(Logbook,LogbookAdmin)
+admin.site.register(Datalayer)
 
 
 
