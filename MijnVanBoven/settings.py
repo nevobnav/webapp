@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'MijnVanBoven.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'VanBoven_website',
+        'NAME': 'VanBoven_test',
         'USER': DB_USER,
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_IP,

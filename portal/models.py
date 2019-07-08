@@ -203,3 +203,5 @@ class Datalayer(models.Model):
     legend_title = models.CharField(max_length = 256, null=True)
     legend_unit = models.CharField(max_length = 256, null=True)
     scan = models.ForeignKey(Scan, on_delete=models.SET_NULL, null=True)
+    def __str__(self):
+        return (self.scan + ' - ' + self.legend_title)
