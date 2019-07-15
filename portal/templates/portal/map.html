@@ -175,7 +175,9 @@
 
       {% endif %}
     {% endfor %}
-    last_valid_scan.addTo(map);
+    if (Object.keys(scan_list).length > 0){
+      last_valid_scan.addTo(map)
+    }
 
 
 
@@ -348,17 +350,20 @@
     };
 
     // function used to update 'infobox' content based on current layer clicked
-    info.update = function (infobox_context) {
+    info.update = function (infobox_context){
       this._div.innerHTML = (infobox_context ?
           '<b> Vlieghoogte: </b>' + infobox_context[0] + ' m'
           : '-');
       scan_info = infobox_context
     };
 
+    // Initiate data layers
+    if (Object.keys(scan_list).length>0){
+      info.addTo(map);
+      info.update([scan_flight_altitude, scan_id]);  // on map creation, infobox content is pulled manually. LELIJK - fixen als er meer info in infobox_context komt!
+      drawMarkers([scan_flight_altitude, scan_id]);
+    }
 
-    info.addTo(map);
-    info.update([scan_flight_altitude, scan_id]);  // on map creation, infobox content is pulled manually. LELIJK - fixen als er meer info in infobox_context komt!
-    drawMarkers([scan_flight_altitude, scan_id]);
     //Initiate data layer group
     let max_data_val = 0
     let new_layer_id = 0
