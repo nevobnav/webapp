@@ -90,8 +90,9 @@ def map(request, map_id):
     for dl in data_layers:
         data_values = [x['properties'][dl.property_name] for x in dl.data['features']]
         max_val = max(data_values)
+        min_val = min(data_values)
         dl_dict = {'scan_id': dl.scan_id, 'property_name': dl.property_name,'layer_name':dl.layer_name,  'data': dl.data,
-             'max_val': max_val, 'legend_title':dl.legend_title, 'legend_unit':dl.legend_unit}
+             'max_val': max_val, 'min_val':min_val, 'legend_title':dl.legend_title, 'legend_unit':dl.legend_unit}
         data_layer_list.append(dl_dict)
 
 
