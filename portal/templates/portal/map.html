@@ -462,8 +462,8 @@
       for (i=0; i < grades.length; i++){
         this._div.innerHTML +=
         '<i style="background:' + get_choro_color(grades[i],options.min_data_val, options.max_data_val) + '"></i> ' +
-             '<p class="legend-tickers">' + grades[i].toPrecision(3) +
-             (grades[i + 1] ? '&ndash;' + grades[i + 1].toPrecision(2) +'<br>' : '+' + '</p>');
+             '<p class="legend-tickers">' + parseFloat(grades[i].toPrecision(2)) +
+             (grades[i + 1] ? '&ndash;' + parseFloat(grades[i + 1].toPrecision(2)) +'<br>' : '+' + '</p>');
       }
       $('#legend-header').text(options.legend_title);
       $('#legend-unit').text(options.legend_unit);
