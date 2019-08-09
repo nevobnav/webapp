@@ -462,7 +462,7 @@
       for (i=0; i < grades.length; i++){
         this._div.innerHTML +=
         '<i style="background:' + get_choro_color(grades[i],options.min_data_val, options.max_data_val) + '"></i> ' +
-             '<p class="legend-tickers">' + grades[i].toPrecision(2) +
+             '<p class="legend-tickers">' + grades[i].toPrecision(3) +
              (grades[i + 1] ? '&ndash;' + grades[i + 1].toPrecision(2) +'<br>' : '+' + '</p>');
       }
       $('#legend-header').text(options.legend_title);
@@ -478,18 +478,18 @@
     }
 
     function get_choro_color(val, min_data_val,max_data_val){
-      var colorlist = ['#FFBF00','#E6B700','#CCAF00','#B3C600','#999F00','#809800','#669000','#4D8800','#338000','#1A7800','#007000'];
+      var colorlist = ['#440154','#482878','#3e4989','#31688e','#26828e','#1f9e89','#35b779','#6ece58','#b5de2b','#fde725'];
       var data_value_range = max_data_val - min_data_val
-      return val > (min_data_val + 0.9*data_value_range)  ? colorlist[10] :
-          val > (min_data_val + 0.8*data_value_range) ? colorlist[9] :
-          val > (min_data_val + 0.7*data_value_range)  ? colorlist[8]  :
-          val > (min_data_val + 0.6*data_value_range)  ? colorlist[7]  :
-          val > (min_data_val + 0.5*data_value_range)  ? colorlist[6]  :
+      return val > (min_data_val + 0.9*data_value_range)  ? colorlist[0] :
+          val > (min_data_val + 0.8*data_value_range) ? colorlist[1] :
+          val > (min_data_val + 0.7*data_value_range)  ? colorlist[2]  :
+          val > (min_data_val + 0.6*data_value_range)  ? colorlist[3]  :
+          val > (min_data_val + 0.5*data_value_range)  ? colorlist[4]  :
           val > (min_data_val + 0.4*data_value_range)  ? colorlist[5]  :
-          val > (min_data_val + 0.3*data_value_range)  ? colorlist[4]  :
-          val > (min_data_val + 0.2*data_value_range)  ? colorlist[3]  :
-          val > (min_data_val + 0.1*data_value_range)  ? colorlist[2]  :
-          colorlist[1] ;
+          val > (min_data_val + 0.3*data_value_range)  ? colorlist[6]  :
+          val > (min_data_val + 0.2*data_value_range)  ? colorlist[7]  :
+          val > (min_data_val + 0.1*data_value_range)  ? colorlist[8]  :
+          colorlist[9] ; //This last one is the bluest color for the smalllest values
     }
 
 
