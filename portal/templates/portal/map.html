@@ -54,11 +54,10 @@
   <!-- fontawesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
-  <!-- This little loop adds available datalayers in json format to this page. Would be nice
-  if can give this a unique id, instead of the property_name. ID is used later when getting
-  the element by ID -->
+  <!-- This little loop adds available datalayers in json format to this page. ID equals
+  scan_id + property_name, both from same data_layer object. -->
   {% for data_layer in data_layers %}
-    {{ data_layer.data|json_script:data_layer.property_name}}
+    {{ data_layer.data|json_script:data_layer.datalayer_id}}
   {% endfor %}
 
 
@@ -381,6 +380,7 @@
         drawMarkers(currentlayer.layer.options.infobox_context);
         resetDataLayerControls();
         showDataLayer(currentlayer.layer.options.infobox_context);
+
       // Check if its a datalayer. In that case, make sure there's a legend.
       } else if (Object.keys(currentlayer.layer).includes("options")){
         if (currentlayer.layer.options.layertype == 'datalayer'){
@@ -421,7 +421,7 @@
       {% for dl in data_layers %}
         var data_scan_id = {{dl.scan_id}}
         if (data_scan_id == infobox_context[1]){
-          var data = JSON.parse(document.getElementById('{{ dl.property_name }}').textContent);
+          var data = JSON.parse(document.getElementById('{{ dl.datalayer_id}}').textContent);
           new_layer = L.geoJson(data, {style: function set_data_style(feature) {
             var choro_color = get_choro_color(feature.properties.{{dl.property_name}}, {{dl.min_val}},{{dl.max_val}})
             return{
@@ -432,11 +432,11 @@
               fillOpacity: 0.9
             }
           }
-          , coordsToLatLng: latlong, layertype: 'datalayer',
+          , coordsToLatLng: LatLong, layertype: 'datalayer',
             legend_title: '{{dl.legend_title}}', legend_unit: '{{dl.legend_unit}}', min_data_val: {{dl.min_val}}, max_data_val: {{dl.max_val}} });
           new_layer_id = new_layer._leaflet_id
-          // new_layer.addTo(datalayerGroup)
           layerControl.addOverlay(new_layer, "{{ dl.layer_name }}", "Extra's") //This line also triggers reset of the radio button
+
         };
       {% endfor %}
 
@@ -471,7 +471,7 @@
     };
 
 
-    function latlong(coordinates) {
+    function LatLong(coordinates) {
       var max_coordinate = Math.max(...coordinates)
       var min_coordinate = Math.min(...coordinates)
       return {lat: max_coordinate, lng: min_coordinate};
