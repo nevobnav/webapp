@@ -35,7 +35,7 @@ OPERATIONS_MAIL = config['OPERATIONS_MAIL']
 OPERATIONS_MAIL_PASS = config['OPERATIONS_MAIL_PASS']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -166,3 +166,4 @@ try:
 except ImportError as e:
     print("Bad import")
     pass
+

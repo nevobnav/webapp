@@ -43,10 +43,11 @@ pandocfilters==1.4.2
 parso==0.3.4
 pexpect==4.6.0
 pickleshare==0.7.5
+pkg-resources==0.0.0
 prometheus-client==0.6.0
 prompt-toolkit==2.0.9
-psycopg2==2.7.7
-psycopg2-binary==2.7.7
+psycopg2==2.8.4
+psycopg2-binary==2.8.4
 ptyprocess==0.6.0
 Pygments==2.3.1
 pyparsing==2.3.1
