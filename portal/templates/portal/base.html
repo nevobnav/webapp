@@ -68,8 +68,19 @@
         <div class="col-auto  sidebar">
           <div class="sidebar-sticky">
             <ul class="nav flex-column" id="js-menu">
-              <li class="nav-item">
-                <h5 class="d-flex justify-content-between align-items-center px-3 mt-4 mb-1"> Menu</h5>
+              <li class="d-flex justify-content-between nav-item mt-4 mb-1">
+                <h5 class="px-3 mt-2" id=menu>Menu</h5>
+                <a class="btn btn-warning dropdown-toggle mx-5" href="#" role="button" id="yearSelector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{ year }}
+                </a>
+
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  {% for selection_year in portal_years %}
+                    {% if selection_year != year|add:"0"  %}
+                      <a class="dropdown-item" href="{{ request.path }}?year={{ selection_year }}">{{ selection_year }}</a>
+                    {% endif %}
+                  {% endfor %}
+                </div>
               </li>
 
 
@@ -82,17 +93,19 @@
               <ul class="nav flex-column mb-2">
 
               {% for parent_plot in user.customer.get_all_parent_plots %}
-              <li class="nav-item">
-                  <a class="nav-link" href="{% url 'portal-map' parent_plot.id %}">
-                  {% if this_plot.parent_plot_id == parent_plot.pk %}
-                    <span data-feather="check-square"></span> <!-- This is the icon -->
-                  {% else %}
-                    <span data-feather="square"></span> <!-- This is the icon -->
-                  {% endif %}
-                  {{ parent_plot.name }} <span id="new_badge{{ parent_plot.id }}" class="badge badge-warning"></span>
-                  <span class="text-secondary"> ({{  parent_plot.get_plot.area | floatformat}} ha.)</span>
-                </a>
-              </li>
+                {% if year|add:"0" in parent_plot.years %}
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'portal-map' parent_plot.id%}?year={{ year }}">
+                      {% if this_plot.parent_plot_id == parent_plot.pk %}
+                        <span data-feather="check-square"></span> <!-- This is the icon -->
+                      {% else %}
+                        <span data-feather="square"></span> <!-- This is the icon -->
+                      {% endif %}
+                      {{ parent_plot.name }} <span id="new_badge{{ parent_plot.id }}" class="badge badge-warning"></span>
+                      <span class="text-secondary"> ({{  parent_plot.get_plot.area | floatformat}} ha.)</span>
+                    </a>
+                  </li>
+                {% endif %}
               {% endfor %}
               </ul>
             {% else %}

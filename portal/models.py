@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from datetime import date,time
@@ -32,11 +33,12 @@ class Customer(models.Model):
             unseen_parent_plots.append(scan.plot.parent_plot.id)
         return unseen_parent_plots
 
-
-
 class Parent_Plot(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=100)
+    years = ArrayField(
+        models.IntegerField(),
+        default=[2019])
 
     def __str__(self):
         return str(self.customer) + ' - ' + self.name + ' parent'
@@ -44,7 +46,6 @@ class Parent_Plot(models.Model):
     def get_plot(self):
         my_plot = Plot.objects.filter(parent_plot_id=self.pk).filter(active=True).first()
         return my_plot
-
 
 
 

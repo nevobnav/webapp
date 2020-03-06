@@ -16,7 +16,17 @@ import os
 
 
 def home(request):
-    return render(request, 'portal/home.html', context={})
+    #Read year from url or set to current year by default
+    year = request.GET.get('year')
+    portal_years = [2020, 2019]
+    if year == None:
+        year = datetime.date.today().year
+
+    context = {
+    'portal_years': portal_years,
+    'year': year
+    }
+    return render(request, 'portal/home.html', context=context)
 
 def add_note(request):
     name = request.GET.get('name')
@@ -44,14 +54,23 @@ def add_note(request):
 
 @login_required(login_url='/login/')
 def map(request, map_id):
+
     user = request.user
+
+    #Read year from url, or set to this year by default
+    year = request.GET.get('year')
+    portal_years = [2020, 2019]
+    if year == None:
+        year = datetime.date.today().year
+
 
     # Get the right plot
     this_parent_plot = Parent_Plot.objects.get(id=map_id)
     this_plot = this_parent_plot.get_plot()
 
     #Fetch the corresponding scans
-    scans = Scan.objects.filter(plot=this_plot).order_by('date')
+    scans = Scan.objects.filter(plot=this_plot)
+    scans = scans.filter(date__year=year).order_by('date')
     scan_ids = []
 
     #Determine if any scans are new, if so mark as seen
@@ -99,6 +118,8 @@ def map(request, map_id):
     if user.customer.pk == this_parent_plot.customer_id or user.is_staff:
         context = {
         'map_id' : map_id,
+        'portal_years' : portal_years,
+        'year' : year,
         'this_parent_plot': this_parent_plot,
         'this_plot' : this_plot,
         'latlong': plot_polygon_latlong,

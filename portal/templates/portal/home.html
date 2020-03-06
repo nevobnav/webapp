@@ -6,6 +6,7 @@
       <p>Welkom {{ user.first_name }}!</p>
       <div class="info-text" id="new_scan_info_id"></div>
 
+
       <script type="text/javascript">
         let unseen_plots = false
         {% if user.customer.get_all_unseen_parent_plots|length > 0 %}
